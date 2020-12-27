@@ -1,12 +1,12 @@
 const pixelGrid = document.getElementById('pixelGrid');
-let canvasRect = pixelGrid.getBoundingClientRect();
-let scaleX = pixelGrid.width / canvasRect.width;
-let scaleY = pixelGrid.height / canvasRect.height;
+let canvasRect;
+let scaleX;
+let scaleY;
 const context = pixelGrid.getContext('2d');
 let drawing = false;
 
 const startDrawing = event => {
-    drawPixel(event.pageX, event.pageY, palettes[0].colors[0]);
+    drawPixel(event.pageX, event.pageY, palettes[randomPalette].colors[0]);
     drawing = true;
 };
 
@@ -14,18 +14,21 @@ const stopDrawing = event => drawing = false;
 
 const  draw = event => {
     if (drawing) {
-        drawPixel(event.pageX, event.pageY, palettes[0].colors[0]);
+        drawPixel(event.pageX, event.pageY, palettes[randomPalette].colors[0]);
     }
 }
 const drawPixel = (x, y, color) => {
     context.fillStyle = color;
     context.fillRect(Math.floor((x - canvasRect.left)*scaleX), Math.floor((y - canvasRect.top)*scaleY), 1, 1);
 }
-window.addEventListener("resize",()=>{
+
+const setDrawingScale = () => {
     canvasRect = pixelGrid.getBoundingClientRect();
     scaleX = pixelGrid.width / canvasRect.width;
     scaleY = pixelGrid.height / canvasRect.height;
-})
+}
+window.addEventListener("load", setDrawingScale);
+window.addEventListener("resize", setDrawingScale);
 window.addEventListener("mousedown", startDrawing);
 window.addEventListener("mouseup", stopDrawing);
 window.addEventListener("mousemove", draw);
