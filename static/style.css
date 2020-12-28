@@ -12,6 +12,23 @@
     src: url("TeachersPet–Regular.ttf");
 }
 
+h3, h4 {
+    font-size: 1rem;
+    padding: 0;
+    margin: 0;
+    color: var(--color-2);
+}
+
+h4 {
+    font-size: .8rem;
+}
+
+a, a:visited {
+    color: var(--color-1);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--color-1);
+}
+
 .fill-1 {
     fill: var(--color-1);
     background: var(--color-1);
@@ -83,7 +100,7 @@ header:last-child {
 
 main {
     display: flex;
-    flex-flow: row;
+    flex-flow: column;
     align-items: center;
     justify-content: center;
     padding: .5rem;
@@ -105,21 +122,30 @@ canvas {
 
 menu {
     display: flex;
-    flex-flow: column wrap;
+    flex-flow: row;
     gap: 1rem;
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    height: 4rem;
+    padding: 0;
+    max-width: 100%;
+    width: 75ch;
+    justify-content: space-between;
+}
+
+#palette-options {
+    display: flex;
+    flex-flow: row;
+    gap: 1rem;
 }
 
 .color { 
+    border: 2px solid var(--color-3);
     list-style: none;
     padding: 0;
     margin: 0;
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
+    cursor: pointer;
 }
 
 .sr-only {

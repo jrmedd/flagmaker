@@ -1,12 +1,50 @@
+let root = document.documentElement;
+
 const pixelGrid = document.getElementById('pixelGrid');
 let canvasRect;
 let scaleX;
 let scaleY;
 const context = pixelGrid.getContext('2d');
 let drawing = false;
+let selectedColorIndex = 0;
+
+let palettes = [
+  {
+    author: {
+      name: "James Medd",
+      slug: "jrmedd",
+    },
+    name: "The uninteresting grey palette",
+    colors: ["#bbbbbb", "#999999", "#666666", "#333333", "#000000"],
+  },
+];
+let randomPalette = 0;
+const paletteName = document.getElementById("palette-name");
+const authorName = document.getElementById("author-name");
+
+fetch(`${location.origin}/palettes/5`)
+  .then((res) => res.status == 200 && res.json())
+  .then((data) => {
+    palettes = data.palettes;
+    if (palettes.length > 0) {
+      randomPalette = Math.floor(Math.random() * palettes.length);
+      paletteName.textContent = palettes[randomPalette].name;
+      authorName.textContent = palettes[randomPalette].author.name;
+      authorName.href = `https://lospec.com/${palettes[randomPalette].author.slug}`;
+      const colorPickers = document.getElementsByClassName("color");
+      for (let i = 0; i < 5; i++) {
+        colorPickers[i].addEventListener("click",()=>selectedColorIndex=i);
+        root.style.setProperty(
+          `--color-${i + 1}`,
+          palettes[randomPalette].colors[i]
+        );
+      }
+    }
+  });
+
 
 const startDrawing = event => {
-    drawPixel(event.pageX, event.pageY, palettes[randomPalette].colors[0]);
+    drawPixel(event.pageX, event.pageY, palettes[randomPalette].colors[selectedColorIndex]);
     drawing = true;
 };
 
@@ -14,7 +52,7 @@ const stopDrawing = event => drawing = false;
 
 const  draw = event => {
     if (drawing) {
-        drawPixel(event.pageX, event.pageY, palettes[randomPalette].colors[0]);
+        drawPixel(event.pageX, event.pageY, palettes[randomPalette].colors[selectedColorIndex]);
     }
 }
 const drawPixel = (x, y, color) => {
@@ -35,6 +73,7 @@ window.addEventListener("mousemove", draw);
 window.addEventListener("touchdown", startDrawing);
 window.addEventListener("touchup", stopDrawing);
 window.addEventListener("touchmove", draw);
+
 
 /*
 drawing = new Image();
