@@ -1,3 +1,5 @@
+const storage = localStorage
+
 let root = document.documentElement;
 
 const pixelGrid = document.getElementById('pixelGrid');
@@ -6,7 +8,8 @@ let scaleX;
 let scaleY;
 const context = pixelGrid.getContext('2d');
 let drawing = false;
-let selectedColorIndex = 0;
+let saveTimeout;
+
 
 let palettes = [
   {
@@ -18,29 +21,50 @@ let palettes = [
     colors: ["#bbbbbb", "#999999", "#666666", "#333333", "#000000"],
   },
 ];
-let randomPalette = 0;
+
+let selectedColorIndex = 0;
+let selectedPalette = parseInt(storage.getItem("selectedPalette")) || 0;
 const paletteName = document.getElementById("palette-name");
 const authorName = document.getElementById("author-name");
 
+if (storage.getItem("userDesign")) {
+  const drawing = new Image();
+  drawing.src = storage.getItem("userDesign"); // can also be a remote URL e.g. http://
+  drawing.onload =  () => context.drawImage(drawing, 0, 0);
+};
+
+const updatePalette = () => {
+  paletteName.textContent = palettes[selectedPalette].name;
+  authorName.textContent = palettes[selectedPalette].author.name;
+  authorName.href = `https://lospec.com/${palettes[selectedPalette].author.slug}`;
+  const colorPickers = document.getElementsByClassName("color");
+  for (let i = 0; i < 5; i++) {
+    colorPickers[i].addEventListener("click", () => (selectedColorIndex = i));
+    root.style.setProperty(
+      `--color-${i + 1}`,
+      palettes[selectedPalette].colors[i]
+    );
+  }
+};
+
+
+if (!storage.getItem("palettes")) {
 fetch(`${location.origin}/palettes/5`)
   .then((res) => res.status == 200 && res.json())
   .then((data) => {
     palettes = data.palettes;
     if (palettes.length > 0) {
-      randomPalette = Math.floor(Math.random() * palettes.length);
-      paletteName.textContent = palettes[randomPalette].name;
-      authorName.textContent = palettes[randomPalette].author.name;
-      authorName.href = `https://lospec.com/${palettes[randomPalette].author.slug}`;
-      const colorPickers = document.getElementsByClassName("color");
-      for (let i = 0; i < 5; i++) {
-        colorPickers[i].addEventListener("click",()=>selectedColorIndex=i);
-        root.style.setProperty(
-          `--color-${i + 1}`,
-          palettes[randomPalette].colors[i]
-        );
-      }
+      storage.setItem("palettes", JSON.stringify(palettes))
+      selectedPalette = Math.floor(Math.random() * palettes.length);
+      storage.setItem("selectedPalette", selectedPalette);
+      updatePalette();
     }
   });
+}
+else {
+  palettes = JSON.parse(storage.getItem("palettes"));
+  updatePalette();
+}
 
 
 const startDrawing = event => {
@@ -50,7 +74,7 @@ const startDrawing = event => {
       drawPixel(
         touch.pageX,
         touch.pageY,
-        palettes[randomPalette].colors[selectedColorIndex]
+        palettes[selectedPalette].colors[selectedColorIndex]
       );
     }
   }
@@ -58,15 +82,18 @@ const startDrawing = event => {
     drawPixel(
       event.pageX,
       event.pageY,
-      palettes[randomPalette].colors[selectedColorIndex]
+      palettes[selectedPalette].colors[selectedColorIndex]
     );
   }
   drawing = true;
+  clearTimeout(saveTimeout);
 };
+
 
 const stopDrawing = event => {
   event.preventDefault();
   drawing = false;
+  saveTimeout = setTimeout(()=>storage.setItem("userDesign", pixelGrid.toDataURL()), 1000);
 };
 
 const  draw = event => {
@@ -77,7 +104,7 @@ const  draw = event => {
           drawPixel(
             touch.pageX,
             touch.pageY,
-            palettes[randomPalette].colors[selectedColorIndex]
+            palettes[selectedPalette].colors[selectedColorIndex]
           );
         }
       }
@@ -85,7 +112,7 @@ const  draw = event => {
         drawPixel(
           event.pageX,
           event.pageY,
-          palettes[randomPalette].colors[selectedColorIndex]
+          palettes[selectedPalette].colors[selectedColorIndex]
         );
       }
     }
@@ -101,6 +128,26 @@ const setDrawingScale = () => {
     scaleY = pixelGrid.height / canvasRect.height;
 }
 
+
+
+const submission = () => {
+  const png = pixelGrid.toDataURL();
+  const submission = { png: png };
+  fetch(`${location.origin}/submit-flag`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(submission),
+  })
+  .then(res=>res.status == 200 && res.json())
+  .then(data=>{
+    if (data.submitted) {
+      storage.setItem("userFlagId", data.id);
+    }
+  });
+}
+
 window.addEventListener("load", setDrawingScale);
 window.addEventListener("resize", setDrawingScale);
 pixelGrid.addEventListener("mousedown", startDrawing);
@@ -110,15 +157,11 @@ pixelGrid.addEventListener("touchstart", startDrawing);
 pixelGrid.addEventListener("touchend", stopDrawing);
 pixelGrid.addEventListener("touchmove", draw);
 
+document.body.addEventListener("mouseup", stopDrawing);
 
 
-/*
-drawing = new Image();
-drawing.src = "draw.png"; // can also be a remote URL e.g. http://
-drawing.onload = function() {
-   context.drawImage(drawing,0,0);
-};
-*/
+
+
 /*
 // pull the entire image into an array of pixel data
 var imageData = context.getImageData(0, 0, w, h);

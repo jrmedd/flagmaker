@@ -1,5 +1,16 @@
-from flask import Flask, render_template, jsonify
+import base64
+import os
+from bson.objectid import ObjectId
+from flask import Flask, jsonify, render_template, request
+import png
+from pymongo import MongoClient
 import requests
+
+MONGO_URL = os.environ.get('MONGO_URL')
+CLIENT = MongoClient(MONGO_URL)
+DB = CLIENT['collision']
+FLAGS = DB['flags']
+
 APP = Flask(__name__)
 
 @APP.route('/')
@@ -16,6 +27,22 @@ def palettes(number_of_colours):
         return jsonify(palettes=processed_palettes)
     else:
         return jsonify(palettes={})
+
+@APP.route('/submit-flag', methods=["POST"])
+def submit_flag():
+    submission = FLAGS.insert_one({**{"approved": False}, **request.get_json()})
+    return jsonify(submitted=True, id=str(submission.inserted_id))
+
+@APP.route('/get-flag/<flag_id>', methods=["GET"])
+def get_flag(flag_id):
+    requested_flag = FLAGS.find_one({'_id': ObjectId(flag_id)})
+    if (requested_flag):
+        flag_png = base64.b64decode(requested_flag.get('png').split('base64,')[1])
+        reader = png.Reader(bytes=flag_png)
+        width, height, pixels, metadata = reader.read_flat()
+        return jsonify(found=True, png=list(pixels))
+    else:
+        return jsonify(found=False, png="")
 
 
 if __name__ == '__main__':
