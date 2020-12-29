@@ -44,15 +44,50 @@ fetch(`${location.origin}/palettes/5`)
 
 
 const startDrawing = event => {
-    drawPixel(event.pageX, event.pageY, palettes[randomPalette].colors[selectedColorIndex]);
-    drawing = true;
+  event.preventDefault();
+  if (event.touches) {
+    for (let touch of event.touches){
+      drawPixel(
+        touch.pageX,
+        touch.pageY,
+        palettes[randomPalette].colors[selectedColorIndex]
+      );
+    }
+  }
+  else {
+    drawPixel(
+      event.pageX,
+      event.pageY,
+      palettes[randomPalette].colors[selectedColorIndex]
+    );
+  }
+  drawing = true;
 };
 
-const stopDrawing = event => drawing = false;
+const stopDrawing = event => {
+  event.preventDefault();
+  drawing = false;
+};
 
 const  draw = event => {
+  event.preventDefault();
     if (drawing) {
-        drawPixel(event.pageX, event.pageY, palettes[randomPalette].colors[selectedColorIndex]);
+      if (event.touches) {
+        for (let touch of event.touches) {
+          drawPixel(
+            touch.pageX,
+            touch.pageY,
+            palettes[randomPalette].colors[selectedColorIndex]
+          );
+        }
+      }
+      else {
+        drawPixel(
+          event.pageX,
+          event.pageY,
+          palettes[randomPalette].colors[selectedColorIndex]
+        );
+      }
     }
 }
 const drawPixel = (x, y, color) => {
@@ -65,14 +100,16 @@ const setDrawingScale = () => {
     scaleX = pixelGrid.width / canvasRect.width;
     scaleY = pixelGrid.height / canvasRect.height;
 }
+
 window.addEventListener("load", setDrawingScale);
 window.addEventListener("resize", setDrawingScale);
-window.addEventListener("mousedown", startDrawing);
-window.addEventListener("mouseup", stopDrawing);
-window.addEventListener("mousemove", draw);
-window.addEventListener("touchdown", startDrawing);
-window.addEventListener("touchup", stopDrawing);
-window.addEventListener("touchmove", draw);
+pixelGrid.addEventListener("mousedown", startDrawing);
+pixelGrid.addEventListener("mouseup", stopDrawing);
+pixelGrid.addEventListener("mousemove", draw);
+pixelGrid.addEventListener("touchstart", startDrawing);
+pixelGrid.addEventListener("touchend", stopDrawing);
+pixelGrid.addEventListener("touchmove", draw);
+
 
 
 /*
