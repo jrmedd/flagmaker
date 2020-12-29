@@ -9,7 +9,7 @@
 @font-face {
     font-family: 'Teachers Pet';
     font-weight: 400;
-    src: url("TeachersPet–Regular.ttf");
+    src: url("./TeachersPet–Regular.ttf") format("truetype");
 }
 
 h3, h4 {
