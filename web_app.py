@@ -40,7 +40,7 @@ def get_flag(flag_id):
         flag_png = base64.b64decode(requested_flag.get('png').split('base64,')[1])
         reader = png.Reader(bytes=flag_png)
         width, height, pixels, metadata = reader.read_flat()
-        return jsonify(found=True, png=list(pixels))
+        return jsonify(found=True, width=width, height=height, png=list(pixels))
     else:
         return jsonify(found=False, png="")
 
