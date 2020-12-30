@@ -35,8 +35,8 @@ if (storage.getItem("userDesign")) {
 
 const updatePalette = () => {
   paletteName.textContent = palettes[selectedPalette].name;
-  authorName.textContent = palettes[selectedPalette].author.name;
-  authorName.href = `https://lospec.com/${palettes[selectedPalette].author.slug}`;
+  authorName.textContent = palettes[selectedPalette].author ? palettes[selectedPalette].author.name : "Unknown";
+  authorName.href = palettes[selectedPalette].author ? `https://lospec.com/${palettes[selectedPalette].author.slug}`: "#";
   const colorPickers = document.getElementsByClassName("color");
   for (let i = 0; i < 5; i++) {
     colorPickers[i].addEventListener("click", () => (selectedColorIndex = i));
@@ -161,26 +161,26 @@ document.body.addEventListener("mouseup", stopDrawing);
 
 
 
-
-/*
-// pull the entire image into an array of pixel data
-var imageData = context.getImageData(0, 0, w, h);
-
-// examine every pixel, 
-// change any old rgb to the new-rgb
-for (var i=0;i<imageData.data.length;i+=4)
-  {
-      // is this pixel the old rgb?
-      if(imageData.data[i]==oldRed &&
-         imageData.data[i+1]==oldGreen &&
-         imageData.data[i+2]==oldBlue
-      ){
-          // change to your new rgb
-          imageData.data[i]=newRed;
-          imageData.data[i+1]=newGreen;
-          imageData.data[i+2]=newBlue;
-      }
+document.getElementById("next-palette").addEventListener("click", () => {
+  let imageData = context.getImageData(0, 0, pixelGrid.width, pixelGrid.height);
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    let colorIndex = palettes[selectedPalette]["colors"].indexOf(
+      `#${imageData.data[i].toString(16).padStart(2,'0')}${imageData.data[i + 1].toString(16).padStart(2,'0')}${imageData.data[i + 2].toString(16).padStart(2,'0')}`
+    );
+    console.log(colorIndex);
+    let rgb = palettes[(selectedPalette + 1) % palettes.length].colors[
+      colorIndex
+    ]
+      .match(/\w{2}/g)
+      .map((hex) => parseInt(hex, 16));
+    imageData.data[i] = rgb[0];
+    imageData.data[i+1] = rgb[1];
+    imageData.data[i+2] = rgb[2];
   }
-// put the altered data back on the canvas  
-context.putImageData(imageData,0,0);
-*/
+  context.putImageData(imageData,0,0);
+  selectedPalette = (selectedPalette + 1)%palettes.length;
+  updatePalette();
+  storage.setItem("selectedPalette", selectedPalette);
+});
+
+
