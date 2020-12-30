@@ -3,7 +3,7 @@ const storage = localStorage
 let root = document.documentElement;
 
 const pixelGrid = document.getElementById('pixelGrid');
-let canvasRect;
+let canvasRect = pixelGrid.getBoundingClientRect();;
 let scaleX;
 let scaleY;
 let drawSize = 1;
@@ -28,14 +28,22 @@ let selectedPalette = parseInt(storage.getItem("selectedPalette")) || 0;
 const paletteName = document.getElementById("palette-name");
 const authorName = document.getElementById("author-name");
 
-if (storage.getItem("userDesign")) {
-  const drawing = new Image();
-  drawing.src = storage.getItem("userDesign"); // can also be a remote URL e.g. http://
-  drawing.onload =  () => context.drawImage(drawing, 0, 0);
-}
-else {
-  drawPixels(0, 0, 16, palettes[selectedPalette].colors[0]);
-}
+const setDrawingScale = () => {
+  canvasRect = pixelGrid.getBoundingClientRect();
+  scaleX = pixelGrid.width / canvasRect.width;
+  scaleY = pixelGrid.height / canvasRect.height;
+};
+
+
+const drawPixels = (x, y, size, color) => {
+  context.fillStyle = color;
+  context.fillRect(
+    Math.floor((x - canvasRect.left) * scaleX),
+    Math.floor((y - canvasRect.top) * scaleY),
+    size,
+    size
+  );
+};
 
 const updatePalette = () => {
   paletteName.textContent = palettes[selectedPalette].name;
@@ -125,16 +133,6 @@ const  draw = event => {
       }
     }
 }
-const drawPixels = (x, y, size, color) => {
-    context.fillStyle = color;
-    context.fillRect(Math.floor((x - canvasRect.left)*scaleX), Math.floor((y - canvasRect.top)*scaleY), size, size);
-}
-
-const setDrawingScale = () => {
-    canvasRect = pixelGrid.getBoundingClientRect();
-    scaleX = pixelGrid.width / canvasRect.width;
-    scaleY = pixelGrid.height / canvasRect.height;
-}
 
 
 
@@ -167,7 +165,14 @@ pixelGrid.addEventListener("touchmove", draw);
 
 document.body.addEventListener("mouseup", stopDrawing);
 
-
+if (storage.getItem("userDesign")) {
+  const drawing = new Image();
+  drawing.src = storage.getItem("userDesign"); // can also be a remote URL e.g. http://
+  drawing.onload = () => context.drawImage(drawing, 0, 0);
+} else {
+  context.fillStyle = palettes[selectedPalette].colors[0];
+  context.fillRect(0, 0, 16, 16);
+}
 
 document.getElementById("next-palette").addEventListener("click", () => {
   let imageData = context.getImageData(0, 0, pixelGrid.width, pixelGrid.height);
