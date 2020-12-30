@@ -169,9 +169,6 @@ if (storage.getItem("userDesign")) {
   const drawing = new Image();
   drawing.src = storage.getItem("userDesign"); // can also be a remote URL e.g. http://
   drawing.onload = () => context.drawImage(drawing, 0, 0);
-} else {
-  context.fillStyle = palettes[selectedPalette].colors[0];
-  context.fillRect(0, 0, 16, 16);
 }
 
 document.getElementById("next-palette").addEventListener("click", () => {
@@ -180,15 +177,16 @@ document.getElementById("next-palette").addEventListener("click", () => {
     let colorIndex = palettes[selectedPalette]["colors"].indexOf(
       `#${imageData.data[i].toString(16).padStart(2,'0')}${imageData.data[i + 1].toString(16).padStart(2,'0')}${imageData.data[i + 2].toString(16).padStart(2,'0')}`
     );
-    console.log(colorIndex);
-    let rgb = palettes[(selectedPalette + 1) % palettes.length].colors[
-      colorIndex
-    ]
-      .match(/\w{2}/g)
-      .map((hex) => parseInt(hex, 16));
-    imageData.data[i] = rgb[0];
-    imageData.data[i+1] = rgb[1];
-    imageData.data[i+2] = rgb[2];
+    if (imageData.data[i+3] == 255) {
+      let rgb = palettes[(selectedPalette + 1) % palettes.length].colors[
+        colorIndex
+      ]
+        .match(/\w{2}/g)
+        .map((hex) => parseInt(hex, 16));
+      imageData.data[i] = rgb[0];
+      imageData.data[i+1] = rgb[1];
+      imageData.data[i+2] = rgb[2];
+    }
   }
   context.putImageData(imageData,0,0);
   selectedPalette = (selectedPalette + 1)%palettes.length;
