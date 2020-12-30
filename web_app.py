@@ -30,8 +30,34 @@ def palettes(number_of_colours):
 
 @APP.route('/submit-flag', methods=["POST"])
 def submit_flag():
-    submission = FLAGS.insert_one({**{"approved": False}, **request.get_json()})
+    submission = FLAGS.insert_one({**{"approved": False, "stored": False}, **request.get_json()})
     return jsonify(submitted=True, id=str(submission.inserted_id))
+
+@APP.route('/get-flags', methods=["GET"])
+def list_flags():
+    args = request.args
+    query = {'approved': False, 'stored': False}
+    if args.get('stored') and args.get('stored') != "0":
+        print("Searching stored")
+        query['stored'] = True
+    if args.get('approved') and args.get('approved') != "0":
+        print("Searching approved")
+        query['approved'] = True
+    flags = list(FLAGS.find(query))
+    for flag in flags:
+        flag['_id'] = str(flag.get('_id'))
+    return jsonify(flags=flags)
+
+@APP.route('/set-flag/<flag_id>/<field>')
+def set_flag(flag_id, field):
+    if len(flag_id) == 24 and field == "approved":
+        update = {"$set":{"approved": True}}
+    elif len (flag_id) == 24 and field == "stored":
+        update = {"$set": {"stored": True}}
+    else:
+        return jsonify(updated=False)
+    result = FLAGS.update_one({'_id': ObjectId(flag_id)}, update)
+    return jsonify(updated=result.modified_count == 1)
 
 @APP.route('/get-flag/<flag_id>', methods=["GET"])
 def get_flag(flag_id):
