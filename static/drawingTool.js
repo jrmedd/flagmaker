@@ -6,6 +6,7 @@ const pixelGrid = document.getElementById('pixelGrid');
 let canvasRect;
 let scaleX;
 let scaleY;
+let drawSize = 1;
 const context = pixelGrid.getContext('2d');
 let drawing = false;
 let saveTimeout;
@@ -31,7 +32,10 @@ if (storage.getItem("userDesign")) {
   const drawing = new Image();
   drawing.src = storage.getItem("userDesign"); // can also be a remote URL e.g. http://
   drawing.onload =  () => context.drawImage(drawing, 0, 0);
-};
+}
+else {
+  drawPixels(0, 0, 16, palettes[selectedPalette].colors[0]);
+}
 
 const updatePalette = () => {
   paletteName.textContent = palettes[selectedPalette].name;
@@ -71,17 +75,19 @@ const startDrawing = event => {
   event.preventDefault();
   if (event.touches) {
     for (let touch of event.touches){
-      drawPixel(
+      drawPixels(
         touch.pageX,
         touch.pageY,
+        drawSize,
         palettes[selectedPalette].colors[selectedColorIndex]
       );
     }
   }
   else {
-    drawPixel(
+    drawPixels(
       event.pageX,
       event.pageY,
+      drawSize,
       palettes[selectedPalette].colors[selectedColorIndex]
     );
   }
@@ -101,25 +107,27 @@ const  draw = event => {
     if (drawing) {
       if (event.touches) {
         for (let touch of event.touches) {
-          drawPixel(
+          drawPixels(
             touch.pageX,
             touch.pageY,
+            drawSize,
             palettes[selectedPalette].colors[selectedColorIndex]
           );
         }
       }
       else {
-        drawPixel(
+        drawPixels(
           event.pageX,
           event.pageY,
+          drawSize,
           palettes[selectedPalette].colors[selectedColorIndex]
         );
       }
     }
 }
-const drawPixel = (x, y, color) => {
+const drawPixels = (x, y, size, color) => {
     context.fillStyle = color;
-    context.fillRect(Math.floor((x - canvasRect.left)*scaleX), Math.floor((y - canvasRect.top)*scaleY), 1, 1);
+    context.fillRect(Math.floor((x - canvasRect.left)*scaleX), Math.floor((y - canvasRect.top)*scaleY), size, size);
 }
 
 const setDrawingScale = () => {
