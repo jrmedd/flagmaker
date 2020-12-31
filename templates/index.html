@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Collision</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script src="{{ url_for('static', filename='mapStyle.js')}}"> </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?21">
+    <script src="{{ url_for('static', filename='mapStyle.js')}}?21"> </script>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ MAPS_API }}&libraries=&v=weekly" defer></script>
 </head>
 <body>
@@ -56,16 +56,17 @@
             <button aria-label="Next palette" class="text-button" id="next-palette">Next</button>
         </dl>
         <div id="palette-options">
-            <li role="button" class="color fill-1"><span class="sr-only"></span></li>
-            <li role="button" class="color fill-2"><span class="sr-only"></span></li>
-            <li role="button" class="color fill-3"><span class="sr-only"></span></li>
-            <li role="button" class="color fill-4"><span class="sr-only"></span></li>
-            <li role="button" class="color fill-5"><span class="sr-only"></span></li>
+            <svg role="button" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16"><path d="M6 1V0h4v1H6zM4 2V1h2v1H4zM3 3V2h1v1H3zM2 4V3h1v1H2zM1 6V4h1v2H1zM1 10H0V6h1v4zM2 12H1v-2h1v2zM3 13H2v-1h1v1zM4 14H3v-1h1v1zM6 15H4v-1h2v1zM10 15v1H6v-1h4zM12 14v1h-2v-1h2zM13 13v1h-1v-1h1zM14 12v1h-1v-1h1zM15 10v2h-1v-2h1zM15 6h1v4h-1V6zM14 4h1v2h-1V4zM13 3v1h1V3h-1zM12 2h1v1h-1V2zM12 2h-2V1h2v1z" class="fill-3"/><path d="M1 6v4h1v2h1v1h1v1h2v1h4v-1h2v-1h1v-1h1v-2h1V6h-1V4h-1V3h-1V2h-2V1H6v1H4v1H3v1H2v2H1z" class="color fill-1"/></svg>
+            <svg role="button" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16"><path d="M6 1V0h4v1H6zM4 2V1h2v1H4zM3 3V2h1v1H3zM2 4V3h1v1H2zM1 6V4h1v2H1zM1 10H0V6h1v4zM2 12H1v-2h1v2zM3 13H2v-1h1v1zM4 14H3v-1h1v1zM6 15H4v-1h2v1zM10 15v1H6v-1h4zM12 14v1h-2v-1h2zM13 13v1h-1v-1h1zM14 12v1h-1v-1h1zM15 10v2h-1v-2h1zM15 6h1v4h-1V6zM14 4h1v2h-1V4zM13 3v1h1V3h-1zM12 2h1v1h-1V2zM12 2h-2V1h2v1z" class="fill-3"/><path d="M1 6v4h1v2h1v1h1v1h2v1h4v-1h2v-1h1v-1h1v-2h1V6h-1V4h-1V3h-1V2h-2V1H6v1H4v1H3v1H2v2H1z" class="color fill-2"/></svg>
+            <svg role="button" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16"><path d="M6 1V0h4v1H6zM4 2V1h2v1H4zM3 3V2h1v1H3zM2 4V3h1v1H2zM1 6V4h1v2H1zM1 10H0V6h1v4zM2 12H1v-2h1v2zM3 13H2v-1h1v1zM4 14H3v-1h1v1zM6 15H4v-1h2v1zM10 15v1H6v-1h4zM12 14v1h-2v-1h2zM13 13v1h-1v-1h1zM14 12v1h-1v-1h1zM15 10v2h-1v-2h1zM15 6h1v4h-1V6zM14 4h1v2h-1V4zM13 3v1h1V3h-1zM12 2h1v1h-1V2zM12 2h-2V1h2v1z" class="fill-3"/><path d="M1 6v4h1v2h1v1h1v1h2v1h4v-1h2v-1h1v-1h1v-2h1V6h-1V4h-1V3h-1V2h-2V1H6v1H4v1H3v1H2v2H1z" class="color fill-3"/></svg>
+            <svg role="button" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16"><path d="M6 1V0h4v1H6zM4 2V1h2v1H4zM3 3V2h1v1H3zM2 4V3h1v1H2zM1 6V4h1v2H1zM1 10H0V6h1v4zM2 12H1v-2h1v2zM3 13H2v-1h1v1zM4 14H3v-1h1v1zM6 15H4v-1h2v1zM10 15v1H6v-1h4zM12 14v1h-2v-1h2zM13 13v1h-1v-1h1zM14 12v1h-1v-1h1zM15 10v2h-1v-2h1zM15 6h1v4h-1V6zM14 4h1v2h-1V4zM13 3v1h1V3h-1zM12 2h1v1h-1V2zM12 2h-2V1h2v1z" class="fill-3"/><path d="M1 6v4h1v2h1v1h1v1h2v1h4v-1h2v-1h1v-1h1v-2h1V6h-1V4h-1V3h-1V2h-2V1H6v1H4v1H3v1H2v2H1z" class="color fill-4"/></svg>
+            <svg role="button" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16"><path d="M6 1V0h4v1H6zM4 2V1h2v1H4zM3 3V2h1v1H3zM2 4V3h1v1H2zM1 6V4h1v2H1zM1 10H0V6h1v4zM2 12H1v-2h1v2zM3 13H2v-1h1v1zM4 14H3v-1h1v1zM6 15H4v-1h2v1zM10 15v1H6v-1h4zM12 14v1h-2v-1h2zM13 13v1h-1v-1h1zM14 12v1h-1v-1h1zM15 10v2h-1v-2h1zM15 6h1v4h-1V6zM14 4h1v2h-1V4zM13 3v1h1V3h-1zM12 2h1v1h-1V2zM12 2h-2V1h2v1z" class="fill-3"/><path d="M1 6v4h1v2h1v1h1v1h2v1h4v-1h2v-1h1v-1h1v-2h1V6h-1V4h-1V3h-1V2h-2V1H6v1H4v1H3v1H2v2H1z" class="color fill-5"/></svg>
+
         </div>
     </menu>
     </main>
     <aside id="finding-location"><p>Finding your location...</p></aside>
-    <script src="{{ url_for('static', filename='plantingTool.js') }}"></script>
-    <script src="{{ url_for('static', filename='drawingTool.js') }}"></script>
+    <script src="{{ url_for('static', filename='plantingTool.js') }}?21"></script>
+    <script src="{{ url_for('static', filename='drawingTool.js') }}?21"></script>
 </body>
 </html>
