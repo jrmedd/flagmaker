@@ -53,12 +53,12 @@ function initMap() {
               position: userLocation,
               map: map,
               icon: {
-                url: storage.getItem("userDesign"),
-                scaledSize: new google.maps.Size(64, 64),
-                anchor: new google.maps.Point(pixelGrid.width, pixelGrid.height),
+                ...plantIcon,
+                anchor: new google.maps.Point(8, 8),
               },
               draggable: true,
               raiseOnDrag: false,
+              zIndex: 9999
             });
           }
         confirmPlant.addEventListener("click", event => {
@@ -74,6 +74,22 @@ function initMap() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(submission)
+          }).then(()=>{
+            const plantedMarker = new google.maps.Marker({
+              position: new google.maps.LatLng({lat:lat, lng:lng}),
+              map: map,
+              icon: {
+                url: storage.getItem("userDesign"),
+                scaledSize: new google.maps.Size(32, 32),
+                anchor: new google.maps.Point(
+                  pixelGrid.width,
+                  pixelGrid.height
+                ),
+                zIndex: 0
+              },
+              draggable: false,
+              raiseOnDrag: false,
+            });
           });
         });
         createNew.addEventListener("click", ()=>{

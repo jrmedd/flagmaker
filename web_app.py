@@ -10,6 +10,7 @@ MONGO_URL = os.environ.get('MONGO_URL')
 CLIENT = MongoClient(MONGO_URL)
 DB = CLIENT['collision']
 FLAGS = DB['flags']
+PLANTS = DB['plants']
 
 MAPS_API = os.environ.get('MAPS_API')
 
@@ -72,6 +73,11 @@ def get_flag(flag_id):
         return jsonify(found=True, width=width, height=height, png=list(pixels))
     else:
         return jsonify(found=False, png="")
+
+@APP.route('/plant-flag', methods=["POST"])
+def plant_flag():
+    plant = PLANTS.insert_one({**request.get_json()})
+    return jsonify(planted=plant.acknowledged)
 
 
 if __name__ == '__main__':
