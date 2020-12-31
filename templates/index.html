@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Collision</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='mapStyle.js')}}"> </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ MAPS_API }}&libraries=&v=weekly" defer></script>
 </head>
 <body>
     <header>
@@ -36,6 +38,11 @@
     <main>
     <canvas id="pixelGrid" width="16" height="16">
     </canvas>
+    <div id="map-container"></div>
+    <div id="planting-controls">
+        <button id="confirm-plant" class="text-button">Plant here!</button>
+        <button id="create-new" class="text-button">Create a new flag</button>
+    </div>
     <menu type="toolbar" id="color-picker">
         <dl id="palette-meta-data">
             <h2 class="sr-only">Colour palette</h2>
@@ -57,6 +64,8 @@
         </div>
     </menu>
     </main>
+    <aside id="finding-location"><p>Finding your location...</p></aside>
+    <script src="{{ url_for('static', filename='plantingTool.js') }}"></script>
     <script src="{{ url_for('static', filename='drawingTool.js') }}"></script>
 </body>
 </html>

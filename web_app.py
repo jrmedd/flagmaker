@@ -11,11 +11,14 @@ CLIENT = MongoClient(MONGO_URL)
 DB = CLIENT['collision']
 FLAGS = DB['flags']
 
+MAPS_API = os.environ.get('MAPS_API')
+
+
 APP = Flask(__name__)
 
 @APP.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', MAPS_API=MAPS_API)
 
 
 @APP.route('/palettes/<number_of_colours>')

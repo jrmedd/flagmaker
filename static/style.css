@@ -85,6 +85,7 @@ header {
     box-sizing: border-box;
     padding-left: 1rem;
     padding-right: 1rem;
+    z-index: 9999e;
 }
 
 #title-logo {
@@ -206,6 +207,32 @@ dt, dd {
     cursor: pointer;
 }
 
+#map-container {
+    width: 100vw;
+    height: 100vh;
+    position: fixed!important;
+    z-index: 999;
+    top: 0;
+    bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+#planting-controls {
+    z-index: 9999;
+    position: fixed;
+    bottom: 12%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-flow: column;
+    gap: 2rem;
+}
+
 .sr-only {
     border: 0;
     clip: rect(1px, 1px, 1px, 1px);
@@ -218,4 +245,21 @@ dt, dd {
     position: absolute;
     width: 1px;
     word-wrap: normal !important;
+}
+
+#finding-location {
+    z-index: 999999;
+    background-color: rgba(0,0,0,0.75);
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    opacity: 0;
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    transition: all 0.3s ease;
+    justify-content: center;
+    align-items: center;
 }

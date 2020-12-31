@@ -134,8 +134,6 @@ const  draw = event => {
     }
 }
 
-
-
 const submission = () => {
   const png = pixelGrid.toDataURL();
   const submission = { png: png };
@@ -150,6 +148,7 @@ const submission = () => {
   .then(data=>{
     if (data.submitted) {
       storage.setItem("userFlagId", data.id);
+      return data.id;
     }
   });
 }
@@ -171,27 +170,44 @@ if (storage.getItem("userDesign")) {
   drawing.onload = () => context.drawImage(drawing, 0, 0);
 }
 
-document.getElementById("next-palette").addEventListener("click", () => {
+const swapPalette = direction => {
   let imageData = context.getImageData(0, 0, pixelGrid.width, pixelGrid.height);
   for (let i = 0; i < imageData.data.length; i += 4) {
     let colorIndex = palettes[selectedPalette]["colors"].indexOf(
-      `#${imageData.data[i].toString(16).padStart(2,'0')}${imageData.data[i + 1].toString(16).padStart(2,'0')}${imageData.data[i + 2].toString(16).padStart(2,'0')}`
+      `#${imageData.data[i].toString(16).padStart(2, "0")}${imageData.data[
+        i + 1
+      ]
+        .toString(16)
+        .padStart(2, "0")}${imageData.data[i + 2]
+        .toString(16)
+        .padStart(2, "0")}`
     );
-    if (imageData.data[i+3] == 255) {
-      let rgb = palettes[(selectedPalette + 1) % palettes.length].colors[
+    if (imageData.data[i + 3] == 255) {
+      let rgb = palettes[((selectedPalette + direction)+palettes
+        .length) % palettes.length].colors[
         colorIndex
       ]
         .match(/\w{2}/g)
         .map((hex) => parseInt(hex, 16));
       imageData.data[i] = rgb[0];
-      imageData.data[i+1] = rgb[1];
-      imageData.data[i+2] = rgb[2];
+      imageData.data[i + 1] = rgb[1];
+      imageData.data[i + 2] = rgb[2];
     }
   }
-  context.putImageData(imageData,0,0);
-  selectedPalette = (selectedPalette + 1)%palettes.length;
+  context.putImageData(imageData, 0, 0);
+  selectedPalette = ((selectedPalette + direction)+palettes.length) % palettes.length;
   updatePalette();
   storage.setItem("selectedPalette", selectedPalette);
-});
+};
+
+document.getElementById("previous-palette").addEventListener("click", ()=>swapPalette(-1));
+document.getElementById("next-palette").addEventListener("click", ()=>swapPalette(1));
 
 
+document.getElementById("plant-flag").addEventListener("click",()=>{
+  const plant = confirm("Are you sure you want to plant this flag? You won't be able to make any changes to it if you continue.");
+  if (plant) { 
+    const flagId = submission();
+    initMap();
+  }
+})
