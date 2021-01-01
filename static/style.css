@@ -141,7 +141,7 @@ main {
     gap: 1rem;
 }
 
-canvas {
+#pixelGrid {
     border: 2px solid var(--color-3);
     width: 34rem;
     max-width: 100%;
