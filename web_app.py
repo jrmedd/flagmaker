@@ -21,6 +21,9 @@ APP = Flask(__name__)
 def index():
     return render_template('index.html', MAPS_API=MAPS_API)
 
+@APP.route('/admin')
+def admin():
+    return render_template('admin.html')
 
 @APP.route('/palettes/<number_of_colours>')
 def palettes(number_of_colours):
@@ -106,5 +109,10 @@ def set_plant():
     else:
         return jsonify(updated=False)
 
+@APP.route('/reset-storage')
+def reset_flags():
+    FLAGS.update_many({'stored': True}, {"$set":{"stored": False}})
+    PLANTS.update_many({'stored':True}, {"$set":{"stored": False}})
+    return jsonify(reset=True)
 if __name__ == '__main__':
     APP.run(host="0.0.0.0", debug=True)

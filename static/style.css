@@ -267,3 +267,32 @@ dt, dd {
     justify-content: center;
     align-items: center;
 }
+
+#unapproved-flags {
+    padding: 0;
+    margin: 0;
+    max-width: 95%;
+    width: 65ch;
+    display: flex;
+    flex-flow: row wrap;
+    gap: 2rem;
+}
+
+#unapproved-flags li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    flex-flow: column;
+}
+
+#unapproved-flags img {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    width: 8rem;
+}

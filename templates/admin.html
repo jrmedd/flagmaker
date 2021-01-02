@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collision – Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
+</head>
+<body>
+    <header>
+        <div id="title-logo">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect class="fill-5" width="16" height="16" />
+                <path class="fill-3" fill-rule="evenodd" clip-rule="evenodd" d="M14 15H13V16H3V15H2V2H3V1H13V2H14V15Z" />
+                <path class="fill-2" fill-rule="evenodd" clip-rule="evenodd" d="M13 9V14H12V15H4V14H3V3H4V2H12V3H13V8H9V9H13Z" />
+                <path class="fill-1" fill-rule="evenodd" clip-rule="evenodd" d="M8 10H12V13H11V14H5V13H4V4H5V3H11V4H12V7H8V10Z" />
+                <path class="fill-5" d="M9 11H11V12H10V13H6V12H5V5H6V4H10V5H11V6H9V5H7V12H9V11Z"/>
+            </svg>
+            <h1><span class="sr-only">C</span>ollision – admin</h1>
+        </div>
+    </header>
+    <main>
+        <ul id="unapproved-flags"></ul>
+    </main>
+    <script src="{{ url_for('static', filename='admin.js') }}"></script>
+</body>
+</html>

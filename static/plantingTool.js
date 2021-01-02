@@ -5,11 +5,10 @@ let tracker;
 let clientLat = 53.47937674151587;
 let clientLng = -2.2450065911312085;
 
-const bottomLeftOfManchesterX = -2.314408;
-const bottomLeftOfManchesterY = 53.4382569;
-const topRightOfManchesterX = -2.1791275;
-const topRightOfManchesterY = 53.5151444;
-
+const bottomLeftOfManchesterX = -2.5285321528127502;
+const bottomLeftOfManchesterY = 53.35971911352883;
+const topRightOfManchesterX = -2.0416134411930216;
+const topRightOfManchesterY = 53.62993510115222;
 const mapContainer = document.getElementById("map-container");
 const findingLocation = document.getElementById("finding-location");
 const plantingControls = document.getElementById("planting-controls");
@@ -17,6 +16,8 @@ const confirmPlant = document.getElementById("confirm-plant");
 const createNew = document.getElementById("create-new");
 
 let userMarker;
+
+
 
 
 const scaleToRange = (input, inputLower, inputUpper, outputLower, outputUpper) => {
@@ -60,11 +61,12 @@ function initMap() {
               raiseOnDrag: false,
               zIndex: 9999
             });
+            google.maps.event.addListener(userMarker, 'drag', ()=>navigator.geolocation.clearWatch(tracker));
           }
         confirmPlant.addEventListener("click", event => {
           event.preventDefault();
-          const x = scaleToRange(userMarker.position.lng(), bottomLeftOfManchesterX, topRightOfManchesterX, -255, 255);
-          const z = scaleToRange(userMarker.position.lat(), bottomLeftOfManchesterY, topRightOfManchesterY, -255, 255);
+          const x = scaleToRange(userMarker.position.lng(), bottomLeftOfManchesterX, topRightOfManchesterX, -2048, 2048);
+          const z = scaleToRange(userMarker.position.lat(), bottomLeftOfManchesterY, topRightOfManchesterY, -2048, 2048);
           const lat = userMarker.position.lat();
           const lng = userMarker.position.lng();
           const submission = {flagId: storage.getItem("userFlagId"), lat: lat, lng: lng, x: x, z: z }
@@ -90,6 +92,10 @@ function initMap() {
               draggable: false,
               raiseOnDrag: false,
             });
+            navigator.geolocation.clearWatch(tracker);
+            userMarker.setMap(null);
+            confirmPlant.style.opacity = 0;
+            confirmPlant.style.pointerEvents = "none";
           });
         });
         createNew.addEventListener("click", ()=>{
@@ -100,6 +106,8 @@ function initMap() {
             mapContainer.style.pointerEvents = "none";
             plantingControls.style.opacity = 0;
             plantingControls.style.pointerEvents = "none";
+            confirmPlant.style.opacity = 1;
+            confirmPlant.style.pointerEvents = "unset";
             context.clearRect(0, 0,  pixelGrid.width, pixelGrid.height);
             storage.removeItem("userDesign");
             storage.removeItem("userFlagId");
