@@ -42,15 +42,13 @@ def list_flags():
     args = request.args
     query = {'approved': False, 'stored': False}
     if args.get('stored') and args.get('stored') != "0":
-        print("Searching stored")
         query['stored'] = True
     if args.get('approved') and args.get('approved') != "0":
-        print("Searching approved")
         query['approved'] = True
     flags = list(FLAGS.find(query))
     for flag in flags:
         flag['_id'] = str(flag.get('_id'))
-    return jsonify(flags=flags)
+    return jsonify(flags=flags, count=len(flags))
 
 @APP.route('/set-flags', methods=["POST"])
 def set_flag():
@@ -98,13 +96,11 @@ def get_plants():
 def set_plant():
     update = {'$set': {}}
     to_update = request.get_json()
-    print(to_update)
     if to_update.get('stored'):
         update['$set']['stored'] = True
     if to_update.get('approved'):
         update['$set']['approved'] = True
     ids = {"$or": [{'_id': ObjectId(plant)} for plant in to_update.get('plants')]}
-    print(ids)
     result = PLNATS.update_many(ids, update)
     return jsonify(updated=result.modified_count > 0)
 

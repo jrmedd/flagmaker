@@ -1,5 +1,7 @@
 local HttpService = game:GetService("HttpService")
+local DataStoreService = game:GetService("DataStoreService")
 
+local flagStore = DataStoreService:GetDataStore("Flags")
 
 local function getUnstoredFlags()
 	local response
@@ -27,6 +29,44 @@ local function getFlagData(id)
 		return data
 	end
 	return {}
+end
+
+local function setFlagsAsStored(ids)
+	local response
+	local data
+	local success, err = pcall(function ()
+		response = HttpService:PostAsync("http://127.0.0.1:5000/set-flags", HttpService:JSONEncode(ids),Enum.HttpContentType.ApplicationJson, false)
+		data = HttpService:JSONDecode(response)
+	end)
+	if success then
+		print(success)
+	else
+		warn(err)
+	end
+	if not data then return {} end
+	if data then
+		return data
+	end
+	return {}
+end
+
+local function storeFlag(id)
+	local success, err = pcall(function()
+		flagStore:SetAsync(id, getFlagData(id))
+	end) 
+	if success then
+		print(success)
+	else
+		warn(err)
+	end
+	return success
+end
+
+local function checkFlag(id)
+	local success, err = pcall(function()
+		local flag  = flagStore:GetAsync(id)
+		print(flag)
+	end)
 end
 
 local function drawFlag(id, posX, posY)
@@ -57,9 +97,24 @@ local function drawFlag(id, posX, posY)
 	end
 end
 
-local newFlags = getUnstoredFlags()
-if newFlags then
-	for i = 1,#newFlags.flags do
-		drawFlag(newFlags.flags[i]['_id'], 200, 200)
+local checkForFlags = coroutine.wrap(function()
+	while true do
+		local newFlags = getUnstoredFlags()
+		local toMarkStored = {}
+		toMarkStored['stored'] = true
+		toMarkStored['flags'] = {}
+		if newFlags.count > 0 then
+			for i = 1,#newFlags.flags do
+				local success, err = pcall(function()
+					storeFlag(newFlags.flags[i]['_id'])
+					checkFlag(newFlags.flags[i]['_id'])
+					wait(1)
+					table.insert(toMarkStored['flags'], newFlags.flags[i]['_id'])
+				end)
+			end
+			setFlagsAsStored((toMarkStored))
+		end
+		wait(1)
 	end
-end
+end)
+checkForFlags()
