@@ -41,9 +41,9 @@ def submit_flag():
 def list_flags():
     args = request.args
     query = {'approved': False, 'stored': False}
-    if args.get('stored') and args.get('stored') != "0":
+    if args.get('stored') != None and args.get('stored') != "0":
         query['stored'] = True
-    if args.get('approved') and args.get('approved') != "0":
+    if args.get('approved') != None and args.get('approved') != "0":
         query['approved'] = True
     flags = list(FLAGS.find(query))
     for flag in flags:
@@ -54,15 +54,16 @@ def list_flags():
 def set_flag():
     update = {'$set':{}}
     to_update = request.get_json()
-    print(to_update)
-    if to_update.get('stored'):
-        update['$set']['stored'] = True
-    if to_update.get('approved'):
-        update['$set']['approved'] = True
+    if to_update.get('stored') != None:
+        update['$set']['stored'] = to_update.get('stored')
+    if to_update.get('approved') != None:
+        update['$set']['approved'] = to_update.get('approved')
     ids = {"$or":[{'_id':ObjectId(flag)} for flag in to_update.get('flags')]}
-    print(ids)
-    result = FLAGS.update_many(ids, update)
-    return jsonify(updated=result.modified_count > 0)
+    if update.get('$set') and len(ids.get("$or")) > 0:
+        result = FLAGS.update_many(ids, update)
+        return jsonify(updated=result.modified_count > 0)
+    else:
+        return jsonify(update=False)
 
 @APP.route('/get-flag/<flag_id>', methods=["GET"])
 def get_flag(flag_id):
@@ -89,20 +90,21 @@ def get_plants():
     plants = list(PLANTS.find(query))
     for plant in plants:
         plant['_id'] = str(plant.get('_id'))
-    return jsonify(plants=plants)
+    return jsonify(plants=plants, count=len(plants))
 
 
 @APP.route('/set-plants', methods=["POST"])
 def set_plant():
     update = {'$set': {}}
     to_update = request.get_json()
-    if to_update.get('stored'):
-        update['$set']['stored'] = True
-    if to_update.get('approved'):
-        update['$set']['approved'] = True
-    ids = {"$or": [{'_id': ObjectId(plant)} for plant in to_update.get('plants')]}
-    result = PLNATS.update_many(ids, update)
-    return jsonify(updated=result.modified_count > 0)
+    if to_update.get('stored') != None:
+        update['$set']['stored'] = to_update.get('stored')
+    ids = {"$or": [{'_id': ObjectId(flag)} for flag in to_update.get('plants')]}
+    if update.get('$set') and len(ids.get("$or")) > 0:
+        result = PLANTS.update_many(ids, update)
+        return jsonify(updated=result.modified_count > 0)
+    else:
+        return jsonify(updated=False)
 
 if __name__ == '__main__':
     APP.run(host="0.0.0.0", debug=True)

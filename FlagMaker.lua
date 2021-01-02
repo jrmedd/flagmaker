@@ -17,6 +17,20 @@ local function getUnstoredFlags()
 	return {}
 end
 
+local function getUnstoredPlants()
+	local response
+	local data
+	pcall(function ()
+		response = HttpService:GetAsync("http://127.0.0.1:5000/get-plants?stored=0")
+		data = HttpService:JSONDecode(response)
+	end)
+	if not data then return {} end
+	if data then
+		return data
+	end
+	return {}
+end
+
 local function getFlagData(id)
 	local response
 	local data
@@ -39,7 +53,24 @@ local function setFlagsAsStored(ids)
 		data = HttpService:JSONDecode(response)
 	end)
 	if success then
-		print(success)
+	else
+		warn(err)
+	end
+	if not data then return {} end
+	if data then
+		return data
+	end
+	return {}
+end
+
+local function setPlantsAsStored(ids)
+	local response
+	local data
+	local success, err = pcall(function ()
+		response = HttpService:PostAsync("http://127.0.0.1:5000/set-plants", HttpService:JSONEncode(ids),Enum.HttpContentType.ApplicationJson, false)
+		data = HttpService:JSONDecode(response)
+	end)
+	if success then
 	else
 		warn(err)
 	end
@@ -55,23 +86,26 @@ local function storeFlag(id)
 		flagStore:SetAsync(id, getFlagData(id))
 	end) 
 	if success then
-		print(success)
 	else
 		warn(err)
 	end
 	return success
 end
 
-local function checkFlag(id)
+local function getStoredFlag(id)
+	local flag
 	local success, err = pcall(function()
-		local flag  = flagStore:GetAsync(id)
-		print(flag)
+		flag  = flagStore:GetAsync(id)
 	end)
+	if success then
+		return flag
+	end
 end
 
-local function drawFlag(id, posX, posY)
-	local flagData = getFlagData(id)
-	if flagData.found then
+local function plantFlag(id, posX, posY)
+	local flagData = getStoredFlag(id)
+	print(flagData)
+	if flagData ~= nil then
 		local newFlag = Instance.new("Model")
 		newFlag.Parent = game.Workspace
 		newFlag.Name = id
@@ -94,6 +128,9 @@ local function drawFlag(id, posX, posY)
 		end
 		local point = CFrame.new(posX, flagData.height, posY)
 		newFlag:SetPrimaryPartCFrame(point)
+		return true
+	else
+		return false
 	end
 end
 
@@ -107,14 +144,32 @@ local checkForFlags = coroutine.wrap(function()
 			for i = 1,#newFlags.flags do
 				local success, err = pcall(function()
 					storeFlag(newFlags.flags[i]['_id'])
-					checkFlag(newFlags.flags[i]['_id'])
 					wait(1)
 					table.insert(toMarkStored['flags'], newFlags.flags[i]['_id'])
 				end)
 			end
-			setFlagsAsStored((toMarkStored))
+			if #toMarkStored['flags'] > 0 then
+				setFlagsAsStored(toMarkStored)
+			end
+			toMarkStored = nil
 		end
 		wait(1)
+		local newPlants = getUnstoredPlants()
+		local toMarkStored = {}
+		toMarkStored['stored'] = true
+		toMarkStored['plants'] = {}
+		if newPlants.count > 0 then
+			for i = 1,#newPlants.plants do
+				local plant = plantFlag(newPlants.plants[i].flagId, newPlants.plants[i].x, newPlants.plants[i].z)
+				if plant then
+					table.insert(toMarkStored['plants'], newPlants.plants[i]['_id'])
+				end
+			end
+			if #toMarkStored['plants'] > 0 then
+				setPlantsAsStored(toMarkStored)
+			end
+			toMarkStored = nil
+		end
 	end
 end)
 checkForFlags()
