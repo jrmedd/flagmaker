@@ -34,7 +34,7 @@ def palettes(number_of_colours):
 
 @APP.route('/submit-flag', methods=["POST"])
 def submit_flag():
-    submission = FLAGS.insert_one({**{"approved": False, "stored": False}, **request.get_json()})
+    submission = FLAGS.insert_one({"approved": False, "stored": False, **request.get_json()})
     return jsonify(submitted=True, id=str(submission.inserted_id))
 
 @APP.route('/get-flags', methods=["GET"])
@@ -52,16 +52,19 @@ def list_flags():
         flag['_id'] = str(flag.get('_id'))
     return jsonify(flags=flags)
 
-@APP.route('/set-flag/<flag_id>/<field>')
-def set_flag(flag_id, field):
-    if len(flag_id) == 24 and field == "approved":
-        update = {"$set":{"approved": True}}
-    elif len (flag_id) == 24 and field == "stored":
-        update = {"$set": {"stored": True}}
-    else:
-        return jsonify(updated=False)
-    result = FLAGS.update_one({'_id': ObjectId(flag_id)}, update)
-    return jsonify(updated=result.modified_count == 1)
+@APP.route('/set-flags', methods=["POST"])
+def set_flag():
+    update = {'$set':{}}
+    to_update = request.get_json()
+    print(to_update)
+    if to_update.get('stored'):
+        update['$set']['stored'] = True
+    if to_update.get('approved'):
+        update['$set']['approved'] = True
+    ids = {"$or":[{'_id':ObjectId(flag)} for flag in to_update.get('flags')]}
+    print(ids)
+    result = FLAGS.update_many(ids, update)
+    return jsonify(updated=result.modified_count > 0)
 
 @APP.route('/get-flag/<flag_id>', methods=["GET"])
 def get_flag(flag_id):
@@ -76,9 +79,34 @@ def get_flag(flag_id):
 
 @APP.route('/plant-flag', methods=["POST"])
 def plant_flag():
-    plant = PLANTS.insert_one({**request.get_json()})
+    plant = PLANTS.insert_one({'stored':False, **request.get_json()})
     return jsonify(planted=plant.acknowledged)
 
+@APP.route('/get-plants', methods=["GET"])
+def get_plants():
+    args = request.args
+    query = {'stored': False}
+    if args.get('stored') and args.get('stored') != "0":
+        query['stored'] = True
+    plants = list(PLANTS.find(query))
+    for plant in plants:
+        plant['_id'] = str(plant.get('_id'))
+    return jsonify(plants=plants)
+
+
+@APP.route('/set-plants', methods=["POST"])
+def set_plant():
+    update = {'$set': {}}
+    to_update = request.get_json()
+    print(to_update)
+    if to_update.get('stored'):
+        update['$set']['stored'] = True
+    if to_update.get('approved'):
+        update['$set']['approved'] = True
+    ids = {"$or": [{'_id': ObjectId(plant)} for plant in to_update.get('plants')]}
+    print(ids)
+    result = PLNATS.update_many(ids, update)
+    return jsonify(updated=result.modified_count > 0)
 
 if __name__ == '__main__':
     APP.run(host="0.0.0.0", debug=True)
