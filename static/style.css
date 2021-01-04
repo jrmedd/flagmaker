@@ -67,7 +67,6 @@ a, a:visited {
 html, body {
     padding: 0;
     margin: 0;
-    overflow: hidden;
     font-family: 'Teachers Pet';
 }
 
@@ -120,6 +119,8 @@ button {
     background-color: var(--color-1);
     color: var(--color-5);
     border-radius: 4px;
+    height: auto;
+    display: block;
 }
 
 button:active {
@@ -134,14 +135,30 @@ main {
     display: flex;
     flex-flow: column;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     padding: .5rem;
     background-image: linear-gradient(var(--color-5), var(--color-4));
     height: calc(100vh - 4rem);
-    gap: 1rem;
 }
 
-#pixelGrid {
+#drawing-area {
+    position: relative;
+}
+
+#grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+#grid path {
+    stroke: var(--color-3);
+}
+
+#pixel-grid, #grid {
     border: 2px solid var(--color-3);
     width: 34rem;
     max-width: 100%;
@@ -154,21 +171,31 @@ main {
     touch-action: none;
 }
 
-menu {
+#color-picker {
     display: flex;
-    flex-flow: row wrap-reverse;
-    gap: 1rem;
+    flex-direction: column-reverse;
     padding: 0;
+    margin: 0;
     max-width: 100%;
     width: 75ch;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+#color-picker > * + * {
+    margin-bottom: .8rem;
 }
 
-dl {
+#palette-meta-data {
     list-style: none;
     margin: 0;
     padding: 0;
     color: var(--color-2);
+    text-align: center;
+}
+
+dl div {
+    display: inline;
 }
 
 dt, dd {
@@ -186,13 +213,25 @@ dt, dd {
 }
 
 #palette-meta-data > *  {
-    margin-bottom: .5rem;
+    margin-bottom: .8rem;
+}
+
+#palette-cycle {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+}
+
+#palette-cycle > * + * {
+    margin-left: 1rem;
 }
 
 #palette-options {
     display: flex;
     flex-flow: row;
-    gap: 1rem;
+}
+div#palette-options > * + * {
+    margin-left: .5rem;
 }
 
 #palette-options svg {
@@ -234,7 +273,6 @@ dt, dd {
     transition: all 0.3s ease;
     display: flex;
     flex-flow: column;
-    gap: 2rem;
 }
 
 .sr-only {
@@ -275,7 +313,6 @@ dt, dd {
     width: 65ch;
     display: flex;
     flex-flow: row wrap;
-    gap: 2rem;
 }
 
 #unapproved-flags li {
@@ -285,7 +322,6 @@ dt, dd {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: 1rem;
     flex-flow: column;
 }
 

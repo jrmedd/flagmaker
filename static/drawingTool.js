@@ -2,8 +2,11 @@ const storage = localStorage
 
 let root = document.documentElement;
 
-const pixelGrid = document.getElementById('pixelGrid');
-let canvasRect = pixelGrid.getBoundingClientRect();;
+const pixelGrid = document.getElementById("pixel-grid");
+const gridOverlay = document.getElementById("grid");
+let gridVisible = false;
+const gridToggleButton = document.getElementById("toggle-grid");
+let canvasRect = pixelGrid.getBoundingClientRect();
 let scaleX;
 let scaleY;
 let drawSize = 1;
@@ -11,6 +14,8 @@ const context = pixelGrid.getContext('2d');
 let drawing = false;
 let saveTimeout;
 
+let clearing = false;
+const clearButton = document.getElementById("clear");
 
 let palettes = [
   {
@@ -36,13 +41,23 @@ const setDrawingScale = () => {
 
 
 const drawPixels = (x, y, size, color) => {
-  context.fillStyle = color;
-  context.fillRect(
-    Math.floor((x - canvasRect.left) * scaleX),
-    Math.floor((y - canvasRect.top) * scaleY),
-    size,
-    size
-  );
+  if (!clearing) {
+    context.fillStyle = color;
+    context.fillRect(
+      Math.floor((x - canvasRect.left) * scaleX),
+      Math.floor((y - canvasRect.top) * scaleY),
+      size,
+      size
+    );
+  }
+  else {
+    context.clearRect(
+      Math.floor((x - canvasRect.left) * scaleX),
+      Math.floor((y - canvasRect.top) * scaleY),
+      size,
+      size
+    );
+  }
 };
 
 const updatePalette = () => {
@@ -51,7 +66,7 @@ const updatePalette = () => {
   authorName.href = palettes[selectedPalette].author ? `https://lospec.com/${palettes[selectedPalette].author.slug}`: "#";
   const colorPickers = document.getElementsByClassName("color");
   for (let i = 0; i < 5; i++) {
-    colorPickers[i].addEventListener("click", () => (selectedColorIndex = i));
+    colorPickers[i].addEventListener("click", () => { clearing=false; selectedColorIndex = i;});
     root.style.setProperty(
       `--color-${i + 1}`,
       palettes[selectedPalette].colors[i]
@@ -152,6 +167,14 @@ const submission = () => {
     }
   });
 }
+
+clearButton.addEventListener("click", ()=> clearing = true);
+
+gridToggleButton.addEventListener("click", ()=> {
+  gridVisible = !gridVisible;
+  gridOverlay.style.opacity = gridVisible ? 1 : 0;
+  gridToggleButton.textContent = gridVisible ? "Hide grid" : "Show grid";
+});
 
 window.addEventListener("load", setDrawingScale);
 window.addEventListener("resize", setDrawingScale);

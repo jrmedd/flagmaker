@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#0d0d0d">
     <title>Collision</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?21">
-    <script src="{{ url_for('static', filename='mapStyle.js')}}?21"> </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?23">
+    <script src="{{ url_for('static', filename='mapStyle.js')}}?23"> </script>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ MAPS_API }}&libraries=&v=weekly" defer></script>
 </head>
 <body>
@@ -36,37 +38,43 @@
         </button>
     </header>
     <main>
-    <canvas id="pixelGrid" width="16" height="16">
-    </canvas>
-    <div id="map-container"></div>
-    <div id="planting-controls">
-        <button id="confirm-plant" class="text-button">Plant here!</button>
-        <button id="create-new" class="text-button">Create a new flag</button>
-    </div>
+        <div aria-hidden="true" id="map-container"></div>
+        <div aria-hidden="true" id="planting-controls">
+            <button id="confirm-plant" class="text-button">Plant here!</button>
+            <button id="create-new" class="text-button">Create a new flag</button>
+        </div>
+        <div id="drawing-area">
+            <canvas id="pixel-grid" width="16" height="16">
+            </canvas>
+            <svg id="grid" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 512 512"><defs/><path id="gridlines" d="M0 0h32v32H0zM32 0h32v32H32zM64 0h32v32H64zM96 0h32v32H96zM128 0h32v32h-32zM160 0h32v32h-32zM192 0h32v32h-32zM224 0h32v32h-32zM256 0h32v32h-32zM288 0h32v32h-32zM320 0h32v32h-32zM352 0h32v32h-32zM384 0h32v32h-32zM416 0h32v32h-32zM448 0h32v32h-32zM480 0h32v32h-32zM0 32h32v32H0zM0 64h32v32H0zM0 96h32v32H0zM0 128h32v32H0zM0 160h32v32H0zM0 192h32v32H0zM0 224h32v32H0zM0 256h32v32H0zM0 288h32v32H0zM0 320h32v32H0zM0 352h32v32H0zM0 384h32v32H0zM0 416h32v32H0zM0 448h32v32H0zM0 480h32v32H0zM32 32h32v32H32zM32 64h32v32H32zM32 96h32v32H32zM32 128h32v32H32zM32 160h32v32H32zM32 192h32v32H32zM32 224h32v32H32zM32 256h32v32H32zM32 288h32v32H32zM32 320h32v32H32zM32 352h32v32H32zM32 384h32v32H32zM32 416h32v32H32zM32 448h32v32H32zM32 480h32v32H32zM64 32h32v32H64zM64 64h32v32H64zM64 96h32v32H64zM64 128h32v32H64zM64 160h32v32H64zM64 192h32v32H64zM64 224h32v32H64zM64 256h32v32H64zM64 288h32v32H64zM64 320h32v32H64zM64 352h32v32H64zM64 384h32v32H64zM64 416h32v32H64zM64 448h32v32H64zM64 480h32v32H64zM96 32h32v32H96zM96 64h32v32H96zM96 96h32v32H96zM96 128h32v32H96zM96 160h32v32H96zM96 192h32v32H96zM96 224h32v32H96zM96 256h32v32H96zM96 288h32v32H96zM96 320h32v32H96zM96 352h32v32H96zM96 384h32v32H96zM96 416h32v32H96zM96 448h32v32H96zM96 480h32v32H96zM128 32h32v32h-32zM128 64h32v32h-32zM128 96h32v32h-32zM128 128h32v32h-32zM128 160h32v32h-32zM128 192h32v32h-32zM128 224h32v32h-32zM128 256h32v32h-32zM128 288h32v32h-32zM128 320h32v32h-32zM128 352h32v32h-32zM128 384h32v32h-32zM128 416h32v32h-32zM128 448h32v32h-32zM128 480h32v32h-32zM160 32h32v32h-32zM160 64h32v32h-32zM160 96h32v32h-32zM160 128h32v32h-32zM160 160h32v32h-32zM160 192h32v32h-32zM160 224h32v32h-32zM160 256h32v32h-32zM160 288h32v32h-32zM160 320h32v32h-32zM160 352h32v32h-32zM160 384h32v32h-32zM160 416h32v32h-32zM160 448h32v32h-32zM160 480h32v32h-32zM192 32h32v32h-32zM192 64h32v32h-32zM192 96h32v32h-32zM192 128h32v32h-32zM192 160h32v32h-32zM192 192h32v32h-32zM192 224h32v32h-32zM192 256h32v32h-32zM192 288h32v32h-32zM192 320h32v32h-32zM192 352h32v32h-32zM192 384h32v32h-32zM192 416h32v32h-32zM192 448h32v32h-32zM192 480h32v32h-32zM224 32h32v32h-32zM224 64h32v32h-32zM224 96h32v32h-32zM224 128h32v32h-32zM224 160h32v32h-32zM224 192h32v32h-32zM224 224h32v32h-32zM224 256h32v32h-32zM224 288h32v32h-32zM224 320h32v32h-32zM224 352h32v32h-32zM224 384h32v32h-32zM224 416h32v32h-32zM224 448h32v32h-32zM224 480h32v32h-32zM256 32h32v32h-32zM256 64h32v32h-32zM256 96h32v32h-32zM256 128h32v32h-32zM256 160h32v32h-32zM256 192h32v32h-32zM256 224h32v32h-32zM256 256h32v32h-32zM256 288h32v32h-32zM256 320h32v32h-32zM256 352h32v32h-32zM256 384h32v32h-32zM256 416h32v32h-32zM256 448h32v32h-32zM256 480h32v32h-32zM288 32h32v32h-32zM288 64h32v32h-32zM288 96h32v32h-32zM288 128h32v32h-32zM288 160h32v32h-32zM288 192h32v32h-32zM288 224h32v32h-32zM288 256h32v32h-32zM288 288h32v32h-32zM288 320h32v32h-32zM288 352h32v32h-32zM288 384h32v32h-32zM288 416h32v32h-32zM288 448h32v32h-32zM288 480h32v32h-32zM320 32h32v32h-32zM320 64h32v32h-32zM320 96h32v32h-32zM320 128h32v32h-32zM320 160h32v32h-32zM320 192h32v32h-32zM320 224h32v32h-32zM320 256h32v32h-32zM320 288h32v32h-32zM320 320h32v32h-32zM320 352h32v32h-32zM320 384h32v32h-32zM320 416h32v32h-32zM320 448h32v32h-32zM320 480h32v32h-32zM352 32h32v32h-32zM352 64h32v32h-32zM352 96h32v32h-32zM352 128h32v32h-32zM352 160h32v32h-32zM352 192h32v32h-32zM352 224h32v32h-32zM352 256h32v32h-32zM352 288h32v32h-32zM352 320h32v32h-32zM352 352h32v32h-32zM352 384h32v32h-32zM352 416h32v32h-32zM352 448h32v32h-32zM352 480h32v32h-32zM384 32h32v32h-32zM384 64h32v32h-32zM384 96h32v32h-32zM384 128h32v32h-32zM384 160h32v32h-32zM384 192h32v32h-32zM384 224h32v32h-32zM384 256h32v32h-32zM384 288h32v32h-32zM384 320h32v32h-32zM384 352h32v32h-32zM384 384h32v32h-32zM384 416h32v32h-32zM384 448h32v32h-32zM384 480h32v32h-32zM416 32h32v32h-32zM416 64h32v32h-32zM416 96h32v32h-32zM416 128h32v32h-32zM416 160h32v32h-32zM416 192h32v32h-32zM416 224h32v32h-32zM416 256h32v32h-32zM416 288h32v32h-32zM416 320h32v32h-32zM416 352h32v32h-32zM416 384h32v32h-32zM416 416h32v32h-32zM416 448h32v32h-32zM416 480h32v32h-32zM448 32h32v32h-32zM448 64h32v32h-32zM448 96h32v32h-32zM448 128h32v32h-32zM448 160h32v32h-32zM448 192h32v32h-32zM448 224h32v32h-32zM448 256h32v32h-32zM448 288h32v32h-32zM448 320h32v32h-32zM448 352h32v32h-32zM448 384h32v32h-32zM448 416h32v32h-32zM448 448h32v32h-32zM448 480h32v32h-32zM480 32h32v32h-32zM480 64h32v32h-32zM480 96h32v32h-32zM480 128h32v32h-32zM480 160h32v32h-32zM480 192h32v32h-32zM480 224h32v32h-32zM480 256h32v32h-32zM480 288h32v32h-32zM480 320h32v32h-32zM480 352h32v32h-32zM480 384h32v32h-32zM480 416h32v32h-32zM480 448h32v32h-32zM480 480h32v32h-32z"/></svg>
+        </div>
     <menu type="toolbar" id="color-picker">
+        <h2 class="sr-only">Colour palette</h2>
         <dl id="palette-meta-data">
-            <h2 class="sr-only">Colour palette</h2>
             <div id="palette-label">
                 <dt>Current palette: </dt><dd><span id="palette-name"></span></dd>
             </div>
             <div id="author-label">
-                <dt>by</dt> <dd><a id="author-name"></a></dd>
+                <dt>by</dt>&nbsp;<dd><a id="author-name"></a></dd>
             </div>
-            <button aria-label="Previous palette" class="text-button" id="previous-palette">Previous</button>
-            <button aria-label="Next palette" class="text-button" id="next-palette">Next</button>
         </dl>
+        <div  id="palette-cycle">
+            <button aria-label="Previous palette" class="text-button" id="previous-palette">Previous palette</button>
+            <button aria-label="Next palette" class="text-button" id="next-palette">Next palette</button>
+        </div>
+        <button id="toggle-grid" class="text-button">Show grid</button>
         <div id="palette-options">
             <svg role="button" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16"><path d="M6 1V0h4v1H6zM4 2V1h2v1H4zM3 3V2h1v1H3zM2 4V3h1v1H2zM1 6V4h1v2H1zM1 10H0V6h1v4zM2 12H1v-2h1v2zM3 13H2v-1h1v1zM4 14H3v-1h1v1zM6 15H4v-1h2v1zM10 15v1H6v-1h4zM12 14v1h-2v-1h2zM13 13v1h-1v-1h1zM14 12v1h-1v-1h1zM15 10v2h-1v-2h1zM15 6h1v4h-1V6zM14 4h1v2h-1V4zM13 3v1h1V3h-1zM12 2h1v1h-1V2zM12 2h-2V1h2v1z" class="fill-3"/><path d="M1 6v4h1v2h1v1h1v1h2v1h4v-1h2v-1h1v-1h1v-2h1V6h-1V4h-1V3h-1V2h-2V1H6v1H4v1H3v1H2v2H1z" class="color fill-1"/></svg>
             <svg role="button" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16"><path d="M6 1V0h4v1H6zM4 2V1h2v1H4zM3 3V2h1v1H3zM2 4V3h1v1H2zM1 6V4h1v2H1zM1 10H0V6h1v4zM2 12H1v-2h1v2zM3 13H2v-1h1v1zM4 14H3v-1h1v1zM6 15H4v-1h2v1zM10 15v1H6v-1h4zM12 14v1h-2v-1h2zM13 13v1h-1v-1h1zM14 12v1h-1v-1h1zM15 10v2h-1v-2h1zM15 6h1v4h-1V6zM14 4h1v2h-1V4zM13 3v1h1V3h-1zM12 2h1v1h-1V2zM12 2h-2V1h2v1z" class="fill-3"/><path d="M1 6v4h1v2h1v1h1v1h2v1h4v-1h2v-1h1v-1h1v-2h1V6h-1V4h-1V3h-1V2h-2V1H6v1H4v1H3v1H2v2H1z" class="color fill-2"/></svg>
             <svg role="button" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16"><path d="M6 1V0h4v1H6zM4 2V1h2v1H4zM3 3V2h1v1H3zM2 4V3h1v1H2zM1 6V4h1v2H1zM1 10H0V6h1v4zM2 12H1v-2h1v2zM3 13H2v-1h1v1zM4 14H3v-1h1v1zM6 15H4v-1h2v1zM10 15v1H6v-1h4zM12 14v1h-2v-1h2zM13 13v1h-1v-1h1zM14 12v1h-1v-1h1zM15 10v2h-1v-2h1zM15 6h1v4h-1V6zM14 4h1v2h-1V4zM13 3v1h1V3h-1zM12 2h1v1h-1V2zM12 2h-2V1h2v1z" class="fill-3"/><path d="M1 6v4h1v2h1v1h1v1h2v1h4v-1h2v-1h1v-1h1v-2h1V6h-1V4h-1V3h-1V2h-2V1H6v1H4v1H3v1H2v2H1z" class="color fill-3"/></svg>
             <svg role="button" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16"><path d="M6 1V0h4v1H6zM4 2V1h2v1H4zM3 3V2h1v1H3zM2 4V3h1v1H2zM1 6V4h1v2H1zM1 10H0V6h1v4zM2 12H1v-2h1v2zM3 13H2v-1h1v1zM4 14H3v-1h1v1zM6 15H4v-1h2v1zM10 15v1H6v-1h4zM12 14v1h-2v-1h2zM13 13v1h-1v-1h1zM14 12v1h-1v-1h1zM15 10v2h-1v-2h1zM15 6h1v4h-1V6zM14 4h1v2h-1V4zM13 3v1h1V3h-1zM12 2h1v1h-1V2zM12 2h-2V1h2v1z" class="fill-3"/><path d="M1 6v4h1v2h1v1h1v1h2v1h4v-1h2v-1h1v-1h1v-2h1V6h-1V4h-1V3h-1V2h-2V1H6v1H4v1H3v1H2v2H1z" class="color fill-4"/></svg>
             <svg role="button" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16"><path d="M6 1V0h4v1H6zM4 2V1h2v1H4zM3 3V2h1v1H3zM2 4V3h1v1H2zM1 6V4h1v2H1zM1 10H0V6h1v4zM2 12H1v-2h1v2zM3 13H2v-1h1v1zM4 14H3v-1h1v1zM6 15H4v-1h2v1zM10 15v1H6v-1h4zM12 14v1h-2v-1h2zM13 13v1h-1v-1h1zM14 12v1h-1v-1h1zM15 10v2h-1v-2h1zM15 6h1v4h-1V6zM14 4h1v2h-1V4zM13 3v1h1V3h-1zM12 2h1v1h-1V2zM12 2h-2V1h2v1z" class="fill-3"/><path d="M1 6v4h1v2h1v1h1v1h2v1h4v-1h2v-1h1v-1h1v-2h1V6h-1V4h-1V3h-1V2h-2V1H6v1H4v1H3v1H2v2H1z" class="color fill-5"/></svg>
-
+            <svg role="button" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16" id="clear"><path class="fill-3" d="M6 1V0h4v1H6zM4 2V1h2v1H4zM3 3V2h1v1H3zM2 4V3h1v1H2zM1 6V4h1v2H1zM1 10H0V6h1v4zM2 12H1v-2h1v2zM3 13H2v-1h1v1zM4 14H3v-1h1v1zM6 15H4v-1h2v1zM10 15v1H6v-1h4zM12 14v1h-2v-1h2zM13 13v1h-1v-1h1zM14 12v1h-1v-1h1zM15 10v2h-1v-2h1zM15 6h1v4h-1V6zM14 4h1v2h-1V4zM13 3v1h1V3h-1zM12 2h1v1h-1V2zM12 2h-2V1h2v1zM13 3h-1v1h-1v1h-1v1H9v1H8v1H7v1H6v1H5v1H4v1H3v1h1v-1h1v-1h1v-1h1V9h1V8h1V7h1V6h1V5h1V4h1V3z"/></svg>
         </div>
     </menu>
     </main>
     <aside id="finding-location"><p>Finding your location...</p></aside>
-    <script src="{{ url_for('static', filename='plantingTool.js') }}?21"></script>
-    <script src="{{ url_for('static', filename='drawingTool.js') }}?21"></script>
+    <script src="{{ url_for('static', filename='plantingTool.js') }}?23"></script>
+    <script src="{{ url_for('static', filename='drawingTool.js') }}?23"></script>
 </body>
 </html>
