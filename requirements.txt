@@ -13,3 +13,5 @@ pypng == 0.0.20
 requests == 2.25.1
 
 gunicorn==19.9.0
+
+Flask-Cors==3.0.9
