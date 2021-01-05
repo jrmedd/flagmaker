@@ -2,6 +2,7 @@ import base64
 import os
 from bson.objectid import ObjectId
 from flask import Flask, jsonify, render_template, request
+from flask_cors import CORS
 import png
 from pymongo import MongoClient
 import requests
@@ -14,8 +15,9 @@ PLANTS = DB['plants']
 
 MAPS_API = os.environ.get('MAPS_API')
 
-
 APP = Flask(__name__)
+
+CORS(APP)
 
 @APP.route('/')
 def index():
