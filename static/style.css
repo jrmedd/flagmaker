@@ -275,6 +275,10 @@ div#palette-options > * + * {
     flex-flow: column;
 }
 
+#planting-controls > * + * {
+    margin-top: 1rem;
+}
+
 .sr-only {
     border: 0;
     clip: rect(1px, 1px, 1px, 1px);
@@ -313,7 +317,14 @@ div#palette-options > * + * {
     width: 65ch;
     display: flex;
     flex-flow: row wrap;
+    justify-content: flex-start;
 }
+
+#unapproved-flags li + li {
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+}
+
 
 #unapproved-flags li {
     list-style: none;
@@ -323,6 +334,10 @@ div#palette-options > * + * {
     justify-content: flex-start;
     align-items: center;
     flex-flow: column;
+}
+
+#unapproved-flags li > * + * {
+    margin-top: 1rem;
 }
 
 #unapproved-flags img {
