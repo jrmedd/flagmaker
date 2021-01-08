@@ -26,13 +26,13 @@ const scaleToRange = (input, inputLower, inputUpper, outputLower, outputUpper) =
 };
 
 function initMap() {
-  fetch("http://ip-api.com/json").then(res=>res.status == 200 && res.json()).then(data => {
+  fetch("https://ip-api.com/json").then(res=>res.status == 200 && res.json()).then(data => {
     clientLat = data.lat;
     clientLng = data.lon;
   }).catch(()=>console.log("Failed to guess user's location"));
     map = new google.maps.Map(mapContainer, {
       center: { lat: clientLat, lng: clientLng },
-      zoom: 14,
+      zoom: 12,
       styles: mapStyle,
       gestureHandling: "greedy",
       mapTypeControl: false,
@@ -46,7 +46,7 @@ function initMap() {
           findingLocation.style.pointerEvents = "none";
           const userLocation = new google.maps.LatLng({ lat: location.coords.latitude, lng: location.coords.longitude });
           map.setCenter(userLocation)
-          map.setZoom(20);
+          map.setZoom(19);
           if (userMarker != undefined) {
             userMarker.setMap(null);
           }
