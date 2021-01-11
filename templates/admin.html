@@ -18,10 +18,15 @@
             </svg>
             <h1><span class="sr-only">C</span>ollision – admin</h1>
         </div>
+        <button id="notify" class="text-button">Get notifications</button>
     </header>
     <main>
         <ul id="unapproved-flags"></ul>
     </main>
     <script src="{{ url_for('static', filename='admin.js') }}"></script>
+    <script>
+        const pushPublicKey = "{{ PUSH_PUBLIC_KEY }}"
+    </script>
+    <script src="{{ url_for('static', filename='swReg.js') }}"></script>
 </body>
 </html>

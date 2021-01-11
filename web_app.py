@@ -1,10 +1,13 @@
 import base64
+import datetime
+import json
 import os
 from bson.objectid import ObjectId
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, abort, jsonify, make_response, render_template, request, send_from_directory
 from flask_cors import CORS
 import png
 from pymongo import MongoClient
+from pywebpush import webpush, WebPushException
 import requests
 
 MONGO_URL = os.environ.get('MONGO_URL')
@@ -12,6 +15,11 @@ CLIENT = MongoClient(MONGO_URL)
 DB = CLIENT['collision']
 FLAGS = DB['flags']
 PLANTS = DB['plants']
+SUBS = DB['subs']
+PALETTES = DB['palettes']
+
+PUSH_PRIVATE_KEY = os.environ.get('PUSH_PRIVATE_KEY')
+PUSH_PUBLIC_KEY = os.environ.get('PUSH_PUBLIC_KEY')
 
 MAPS_API = os.environ.get('MAPS_API')
 
@@ -25,21 +33,28 @@ def index():
 
 @APP.route('/admin')
 def admin():
-    return render_template('admin.html')
+    return render_template('admin.html', PUSH_PUBLIC_KEY=PUSH_PUBLIC_KEY)
 
 @APP.route('/palettes/<number_of_colours>')
 def palettes(number_of_colours):
-    r = requests.get("https://lospec.com/palette-list/load?colorNumberFilterType=exact&colorNumber=%s&page=0&tag=&sortingType=downloads" % (number_of_colours))
-    if r.status_code == 200:
-        returned_palettes = r.json().get('palettes')
-        processed_palettes = [{'colors': ["#%s" % (color) for color in palette.get('colorsArray')][::-1], 'name': palette.get('title'), 'author': palette.get('user')} for palette in returned_palettes]
-        return jsonify(palettes=processed_palettes)
+    palettes = PALETTES.find_one({'number_of_colours': number_of_colours})
+    if not palettes or palettes.get('timestamp') < datetime.datetime.now() - datetime.timedelta(days=1):
+        palettes = fetch_new_colours(number_of_colours)
     else:
-        return jsonify(palettes={})
+        palettes = palettes.get('palettes')
+    return jsonify(palettes=palettes)
+
 
 @APP.route('/submit-flag', methods=["POST"])
 def submit_flag():
-    submission = FLAGS.insert_one({"approved": False, "stored": False, **request.get_json()})
+    flag_data = request.get_json()
+    submission = FLAGS.insert_one({"approved": False, "stored": False, **flag_data})
+    push_to = list(SUBS.find({}, {'_id': 0}))
+    for sub in push_to:
+        webpush(subscription_info=json.loads(sub.get('subscription_json')),
+                vapid_private_key=PUSH_PRIVATE_KEY,
+                vapid_claims={'sub': 'mailto:hello@jamesmedd.co.uk'},
+                data=json.dumps({"title": "New flag", "image":flag_data.get("png"), "data":str(submission.inserted_id)}))
     return jsonify(submitted=True, id=str(submission.inserted_id))
 
 @APP.route('/get-flags', methods=["GET"])
@@ -59,6 +74,7 @@ def list_flags():
 def set_flag():
     update = {'$set':{}}
     to_update = request.get_json()
+    print(to_update)
     if to_update.get('stored') != None:
         update['$set']['stored'] = to_update.get('stored')
     if to_update.get('approved') != None:
@@ -116,5 +132,47 @@ def reset_flags():
     FLAGS.update_many({'stored': True}, {"$set":{"stored": False}})
     PLANTS.update_many({'stored':True}, {"$set":{"stored": False}})
     return jsonify(reset=True)
+
+@APP.route('/manage-subs', methods=["POST", "DELETE"])
+def create_push_subscription():
+    json_data = request.get_json()
+    if request.method == "POST":
+        SUBS.update_one(json_data, {"$set":json_data}, upsert=True)
+    elif request.method == "DELETE":
+        SUBS.delete_one(json_data)
+    return jsonify(status="success")
+
+@APP.route('/image/<id>', methods=["GET"])
+def show_image(id):
+    id = id.split('.png')[0]
+    entry = FLAGS.find_one({'_id': ObjectId(id)})
+    if entry:
+        image = base64.b64decode(entry.get('png').split('base64,')[1])
+        response = make_response(image)
+        response.headers.set('Content-Type', 'image/png')
+        return response
+    else:
+        abort(404)
+
+
+@APP.route('/sw.js')
+def sw():
+    response = make_response(
+        send_from_directory('static', filename='sw.js'))
+    response.headers['Content-Type'] = 'application/javascript'
+    return response
+
+def fetch_new_colours(number_of_colours):
+    r = requests.get(
+        "https://lospec.com/palette-list/load?colorNumberFilterType=exact&colorNumber=%s&page=0&tag=&sortingType=downloads" % (number_of_colours))
+    if r.status_code == 200:
+        returned_palettes = r.json().get('palettes')
+        processed_palettes = [{'colors': ["#%s" % (color) for color in palette.get(
+            'colorsArray')][::-1], 'name': palette.get('title'), 'author': palette.get('user')} for palette in returned_palettes]
+        PALETTES.update_one({'number_of_colours': number_of_colours}, {"$set": {
+                            'number_of_colours': number_of_colours, 'palettes': processed_palettes, 'timestamp': datetime.datetime.now()}}, upsert=True)
+        return processed_palettes
+    else:
+        return []
 if __name__ == '__main__':
     APP.run(host="0.0.0.0", debug=True)
