@@ -347,3 +347,7 @@ div#palette-options > * + * {
     image-rendering: crisp-edges;
     width: 8rem;
 }
+
+.image {
+    font-family: "Teachers Pet";
+}

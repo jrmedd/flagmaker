@@ -7,7 +7,7 @@ local function getUnstoredFlags()
 	local response
 	local data
 	pcall(function ()
-		response = HttpService:GetAsync("https://collision.digital/get-flags?approved=1&stored=0")
+		response = HttpService:GetAsync("http://127.0.0.1:5000/get-flags?approved=1&stored=0")
 		data = HttpService:JSONDecode(response)
 	end)
 	if data then
@@ -22,7 +22,7 @@ local function getUnstoredPlants()
 	local response
 	local data
 	pcall(function ()
-		response = HttpService:GetAsync("https://collision.digital/get-plants?stored=0")
+		response = HttpService:GetAsync("http://127.0.0.1:5000/get-plants?stored=0")
 		data = HttpService:JSONDecode(response)
 	end)
 	if data then
@@ -36,7 +36,7 @@ local function getFlagData(id)
 	local response
 	local data
 	pcall(function ()
-		response = HttpService:GetAsync("https://collision.digital/get-flag/" .. id)
+		response = HttpService:GetAsync("http://127.0.0.1:5000/get-flag/" .. id)
 		data = HttpService:JSONDecode(response)
 	end)
 	if data.found then
@@ -49,7 +49,7 @@ local function setFlagsAsStored(ids)
 	local response
 	local data
 	local success, err = pcall(function ()
-		response = HttpService:PostAsync("https://collision.digital/set-flags", HttpService:JSONEncode(ids),Enum.HttpContentType.ApplicationJson, false)
+		response = HttpService:PostAsync("http://127.0.0.1:5000/set-flags", HttpService:JSONEncode(ids),Enum.HttpContentType.ApplicationJson, false)
 		data = HttpService:JSONDecode(response)
 	end)
 	if not success then
@@ -66,7 +66,7 @@ local function setPlantsAsStored(ids)
 	local response
 	local data
 	local success, err = pcall(function ()
-		response = HttpService:PostAsync("https://collision.digital/set-plants", HttpService:JSONEncode(ids),Enum.HttpContentType.ApplicationJson, false)
+		response = HttpService:PostAsync("http://127.0.0.1:5000/set-plants", HttpService:JSONEncode(ids),Enum.HttpContentType.ApplicationJson, false)
 		data = HttpService:JSONDecode(response)
 	end)
 	if not success then
@@ -113,7 +113,7 @@ local function plantFlag(id, posX, posY)
 				end
 				pixel.Name = "Pixel " .. x .. "-" .. y
 				pixel.Anchored = true
-				pixel.Position = Vector3.new(flagData.width-x, flagData.height-y, 1)
+				pixel.Position = Vector3.new(1, flagData.height-y, x)
 				pixel.Size = Vector3.new(1, 1, 1)
 				local rIndex = x +(3*(x-1)) + (((y-1)*flagData.width)*4)
 				local gIndex = rIndex + 1
@@ -123,7 +123,7 @@ local function plantFlag(id, posX, posY)
 				pixel.Parent = newFlag
 			end
 		end
-		local point = CFrame.new(posX, flagData.height, posY)
+		local point = CFrame.new(posY, flagData.height, posX)
 		newFlag:SetPrimaryPartCFrame(point)
 		return true
 	else
@@ -131,7 +131,25 @@ local function plantFlag(id, posX, posY)
 	end
 end
 
+local function resetStorage()
+	local response
+	local data
+	local success, err = pcall(function ()
+		response = HttpService:GetAsync("http://127.0.0.1:5000/reset-storage")
+		data = HttpService:JSONDecode(response)
+	end)
+	if not success then
+		warn(err)
+	end
+	if data then
+		return data
+	else
+		return {}
+	end
+end
+
 local checkForFlags = coroutine.wrap(function()
+	resetStorage()
 	while true do
 		local newFlags = getUnstoredFlags()
 		local toMarkStored = {}

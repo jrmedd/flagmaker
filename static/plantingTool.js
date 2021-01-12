@@ -5,10 +5,10 @@ let tracker;
 let clientLat = 53.47937674151587;
 let clientLng = -2.2450065911312085;
 
-const bottomLeftOfManchesterX = -2.5285321528127502;
-const bottomLeftOfManchesterY = 53.35971911352883;
-const topRightOfManchesterX = -2.0416134411930216;
-const topRightOfManchesterY = 53.62993510115222;
+const bottomLeftOfManchesterX = -2.5055996097139577;
+const bottomLeftOfManchesterY = 53.35344370751304;
+const topRightOfManchesterX = -2.0462665987345905;
+const topRightOfManchesterY = 53.62571078960952;
 const mapContainer = document.getElementById("map-container");
 const findingLocation = document.getElementById("finding-location");
 const plantingControls = document.getElementById("planting-controls");

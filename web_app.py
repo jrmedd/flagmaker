@@ -1,4 +1,5 @@
 import base64
+import csv
 import datetime
 import json
 import os
@@ -74,7 +75,6 @@ def list_flags():
 def set_flag():
     update = {'$set':{}}
     to_update = request.get_json()
-    print(to_update)
     if to_update.get('stored') != None:
         update['$set']['stored'] = to_update.get('stored')
     if to_update.get('approved') != None:
@@ -142,6 +142,13 @@ def create_push_subscription():
         SUBS.delete_one(json_data)
     return jsonify(status="success")
 
+@APP.route('/locations', methods=["GET"])
+def locations():
+    with open('static/location/manchester-markers.csv') as f:
+        places = [{k: v for k, v in row.items()}
+            for row in csv.DictReader(f, skipinitialspace=True)]
+    return render_template('labels.html', places=places)
+
 @APP.route('/image/<id>', methods=["GET"])
 def show_image(id):
     id = id.split('.png')[0]
@@ -153,7 +160,6 @@ def show_image(id):
         return response
     else:
         abort(404)
-
 
 @APP.route('/sw.js')
 def sw():

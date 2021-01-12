@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
+</head>
+<body >
+    <h1>Collision</h1>
+    {% for place in places %}
+        <canvas width="128" height="24"  id="{{place['image']}}" >
+        </canvas>
+        <p class="lat">{{ place['lat'] }}</p>
+        <p class="lng">{{ place['lng'] }}</p>
+    {% endfor %}
+    <script>
+        let plants = [];
+     
+        const bottomLeftOfManchesterX = -2.5055996097139577;
+        const bottomLeftOfManchesterY = 53.35344370751304;
+        const topRightOfManchesterX = -2.0462665987345905;
+        const topRightOfManchesterY =  53.62571078960952;
+
+        const scaleToRange = (input, inputLower, inputUpper, outputLower, outputUpper) => {
+            const scaledOutput = ((input - inputLower) / (inputUpper - inputLower) * (outputUpper - outputLower) + outputLower);
+            return scaledOutput;
+        };
+        
+        const font = new FontFace("Teachers Pet", "url({{ url_for('static', filename='TeachersPet–Regular.ttf')}})");
+        const places = document.getElementsByTagName("canvas");
+        const lats = document.getElementsByClassName("lat");
+        const lngs = document.getElementsByClassName("lng");
+        font.load().then(()=>{
+        for (let i = 0; i < places.length; i ++) {
+            const latitude = parseFloat(lats[i].textContent);
+            const longitude = parseFloat(lngs[i].textContent);
+            const placeName = places[i].id.replace('-', ' ').replace(/\w\S*/g, text=>`${text.charAt(0).toUpperCase()}${text.substr(1).toLowerCase()}`);
+            const context = places[i].getContext('2d');
+            context.font = "8px Teachers Pet";
+            const size = context.measureText(placeName);
+            places[i].width = size.width;
+            context.font = "8px Teachers Pet";
+            context.textBaseline = "top"
+            context.fillStyle = "#000";
+            context.fillText(placeName, 0 ,8);
+            const png = places[i].toDataURL();
+            const submission = { png: png };
+            fetch(`${location.origin}/submit-flag`, {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json",
+                },
+                body: JSON.stringify(submission),
+            })
+            .then(res=>res.status == 200 && res.json())
+            .then(data=>{
+            if (data.submitted) {
+                plants.push(data.id);
+                const x = scaleToRange(longitude, bottomLeftOfManchesterX, topRightOfManchesterX, -2048, 2048);
+                const z = scaleToRange(latitude, bottomLeftOfManchesterY, topRightOfManchesterY, -2048, 2048);
+                const plant = {flagId: data.id, lat: latitude, lng: longitude, x: x, z: z }
+                fetch(`${location.origin}/plant-flag`, {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(plant)
+                }).then(()=>{
+                    fetch(`${location.origin}/set-flags`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({approved:true,flags:plants})
+                    })
+                });
+            }
+            });
+        }
+        });  
+    </script>
+</body>
+</html>
