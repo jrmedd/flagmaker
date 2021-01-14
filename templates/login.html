@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#333333">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+    <link rel="mask-icon" href="{{ url_for('static', filename='safari-pinned-tab.svg') }}" color="#333333">
+    <meta name="apple-mobile-web-app-title" content="Collision">
+    <meta name="application-name" content="Collision">
+    <meta name="msapplication-TileColor" content="#333333">
+    <meta name="theme-color" content="#ffffff">
+    <title>Collision</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?30">
+    <script src="{{ url_for('static', filename='mapStyle.js')}}?30"> </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ MAPS_API }}&libraries=&v=weekly" defer></script>
+</head>
+<body>
+    <header>
+        <div id="title-logo">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect class="fill-5" width="16" height="16" />
+            <path class="fill-3" fill-rule="evenodd" clip-rule="evenodd" d="M14 15H13V16H3V15H2V2H3V1H13V2H14V15Z" />
+            <path class="fill-2" fill-rule="evenodd" clip-rule="evenodd" d="M13 9V14H12V15H4V14H3V3H4V2H12V3H13V8H9V9H13Z" />
+            <path class="fill-1" fill-rule="evenodd" clip-rule="evenodd" d="M8 10H12V13H11V14H5V13H4V4H5V3H11V4H12V7H8V10Z" />
+            <path class="fill-5" d="M9 11H11V12H10V13H6V12H5V5H6V4H10V5H11V6H9V5H7V12H9V11Z"/>
+        </svg>
+        <h1><span class="sr-only">C</span>ollision</h1>
+        </div>
+    </header>
+    <main>
+    </main>
+    <script src="{{ url_for('static', filename='swReg.js') }}"></script>
+</body>
+</html>

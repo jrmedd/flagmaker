@@ -3,9 +3,11 @@ import csv
 import datetime
 import json
 import os
+from functools import wraps
 from bson.objectid import ObjectId
-from flask import Flask, abort, jsonify, make_response, render_template, request, send_from_directory
+from flask import Flask, abort, jsonify, make_response, render_template, redirect, request, send_from_directory, session, url_for
 from flask_cors import CORS
+from passlib.hash import pbkdf2_sha512
 import png
 from pymongo import MongoClient
 from pywebpush import webpush, WebPushException
@@ -28,6 +30,16 @@ APP = Flask(__name__)
 
 CORS(APP)
 
+
+def login_required(f):
+    @wraps(f)
+    def login_check(*args, **kwargs):
+        if not session.get('username'):
+            return redirect(url_for('login', next=request.path))
+        return f(*args, **kwargs)
+    return login_check
+
+
 @APP.route('/')
 def index():
     return render_template('index.html', MAPS_API=MAPS_API)
@@ -35,6 +47,20 @@ def index():
 @APP.route('/admin')
 def admin():
     return render_template('admin.html', PUSH_PUBLIC_KEY=PUSH_PUBLIC_KEY)
+
+
+@APP.route('/login', methods=['GET', 'POST'])
+def login(username=""):
+    if request.method == 'POST':
+        username = request.form.get('username')
+        user_info = LOGINS.find_one({'username': username}, {'password': 1})
+        if user_info:
+            hash = user_info.get('password')
+            allow = pbkdf2_sha512.verify(request.form.get('password'), hash)
+            if allow:
+                session.update({'username': username})
+                return redirect(request.args.get('next') or url_for('index'))
+    return render_template('login.html', username=username)
 
 @APP.route('/palettes/<number_of_colours>')
 def palettes(number_of_colours):
@@ -52,10 +78,13 @@ def submit_flag():
     submission = FLAGS.insert_one({"approved": False, "stored": False, **flag_data})
     push_to = list(SUBS.find({}, {'_id': 0}))
     for sub in push_to:
-        webpush(subscription_info=json.loads(sub.get('subscription_json')),
-                vapid_private_key=PUSH_PRIVATE_KEY,
-                vapid_claims={'sub': 'mailto:hello@jamesmedd.co.uk'},
-                data=json.dumps({"title": "New flag", "image":flag_data.get("png"), "data":str(submission.inserted_id)}))
+        try:
+            webpush(subscription_info=json.loads(sub.get('subscription_json')),
+                    vapid_private_key=PUSH_PRIVATE_KEY,
+                    vapid_claims={'sub': 'mailto:hello@jamesmedd.co.uk'},
+                    data=json.dumps({"title": "New flag", "image":flag_data.get("png"), "data":str(submission.inserted_id)}))
+        except:
+            print("Could not send")
     return jsonify(submitted=True, id=str(submission.inserted_id))
 
 @APP.route('/get-flags', methods=["GET"])
