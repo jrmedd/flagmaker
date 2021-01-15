@@ -1,5 +1,6 @@
 const storage = localStorage
 
+
 let root = document.documentElement;
 
 const pixelGrid = document.getElementById("pixel-grid");
@@ -74,23 +75,24 @@ const updatePalette = () => {
   }
 };
 
-
-if (!storage.getItem("palettes")) {
-fetch(`${location.origin}/palettes/5`)
-  .then((res) => res.status == 200 && res.json())
-  .then((data) => {
-    palettes = data.palettes;
-    if (palettes.length > 0) {
-      storage.setItem("palettes", JSON.stringify(palettes))
-      selectedPalette = Math.floor(Math.random() * palettes.length);
-      storage.setItem("selectedPalette", selectedPalette);
-      updatePalette();
-    }
-  });
-}
-else {
-  palettes = JSON.parse(storage.getItem("palettes"));
-  updatePalette();
+function getPalettes(){
+  if (!storage.getItem("palettes")) {
+  fetch(`${location.origin}/palettes/5`)
+    .then((res) => res.status == 200 && res.json())
+    .then((data) => {
+      palettes = data.palettes;
+      if (palettes.length > 0) {
+        storage.setItem("palettes", JSON.stringify(palettes))
+        selectedPalette = Math.floor(Math.random() * palettes.length);
+        storage.setItem("selectedPalette", selectedPalette);
+        updatePalette();
+      }
+    });
+  }
+  else {
+    palettes = JSON.parse(storage.getItem("palettes"));
+    updatePalette();
+  }
 }
 
 
@@ -234,3 +236,30 @@ document.getElementById("plant-flag").addEventListener("click",()=>{
     initMap();
   }
 })
+
+const tourModal = document.getElementById("tour-modal");
+const tourContent = document.getElementsByClassName("tour-step");
+let tourStep = 0;
+const advanceTourButton = document.getElementById("advance-tour");
+
+if (!storage.getItem("toured")) {
+  tourModal.style.display = "flex";
+  tourContent[tourStep].style.display = "block";
+} else {
+  getPalettes();
+}
+
+advanceTourButton.addEventListener("click", () => {
+  tourContent[tourStep].style.display = "none";
+  if (tourStep + 1 == tourContent.length) {
+    tourModal.style.display = "none";
+    tourStep = 0;
+    storage.setItem("toured", 1);
+    getPalettes();
+  } else {
+    tourStep++;
+    advanceTourButton.textContent =
+      tourStep + 1 == tourContent.length ? "Get started" : "Next";
+    tourContent[tourStep].style.display = "block";
+  }
+});
