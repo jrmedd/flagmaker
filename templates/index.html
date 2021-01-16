@@ -15,9 +15,9 @@
     <meta name="msapplication-TileColor" content="#333333">
     <meta name="theme-color" content="#ffffff">
     <title>Collision</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?31">
-    <link rel="stylesheet" href="{{ url_for('static', filename='anim.css') }}?31">
-    <script src="{{ url_for('static', filename='mapStyle.js')}}?31"> </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?36">
+    <link rel="stylesheet" href="{{ url_for('static', filename='anim.css') }}?36">
+    <script src="{{ url_for('static', filename='mapStyle.js')}}?36"> </script>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ MAPS_API }}&libraries=&v=weekly" defer></script>
 </head>
 <body>
@@ -85,7 +85,11 @@
     </main>
     <aside id="finding-location"><p>Finding your location...</p></aside>
     <aside id="tour-modal">
-        <div>
+        <div id="tour-content">
+            <div id="tour-controls">
+                <button id="reverse-tour" class="text-button">Previous</button>
+                <button id="advance-tour" class="text-button">Next</button>
+            </div>
             <div class="tour-step">
                 <h2>Welcome!</h2>
                 <p>Welcome to <strong>Collision</strong>, an artwork by <a href="https://jamesmedd.co.uk">James Medd</a>, commissioned by FutureEverything for the <a href="https://futureeverything.org/portfolio/entry/this-place-of-mine/">this place [of mine] project.</a></p>
@@ -383,11 +387,10 @@
                     <li>Plant your flag where you want to!</li>
                 </ol>
             </div>
-            <button id="advance-tour" class="text-button">Next</button>
         </div>
     </aside>
-    <script src="{{ url_for('static', filename='plantingTool.js') }}?31"></script>
-    <script src="{{ url_for('static', filename='drawingTool.js') }}?31"></script>
+    <script src="{{ url_for('static', filename='plantingTool.js') }}?36"></script>
+    <script src="{{ url_for('static', filename='drawingTool.js') }}?36"></script>
     <script src="{{ url_for('static', filename='swReg.js') }}"></script>
 </body>
 </html>

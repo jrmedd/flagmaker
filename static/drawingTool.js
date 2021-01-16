@@ -240,12 +240,18 @@ document.getElementById("plant-flag").addEventListener("click",()=>{
 const tourModal = document.getElementById("tour-modal");
 const tourContent = document.getElementsByClassName("tour-step");
 let tourStep = 0;
+const tourControls = document.getElementById("tour-controls");
 const advanceTourButton = document.getElementById("advance-tour");
+const reverseTourButton = document.getElementById("reverse-tour");
 
 if (!storage.getItem("toured")) {
   tourModal.style.display = "flex";
   tourContent[tourStep].style.display = "block";
+  document.body.style.overflow = "hidden";
+  reverseTourButton.style.display = "none";
+    tourControls.style.justifyContent = "flex-end";
 } else {
+  document.body.style.overflow = "auto";
   getPalettes();
 }
 
@@ -255,11 +261,28 @@ advanceTourButton.addEventListener("click", () => {
     tourModal.style.display = "none";
     tourStep = 0;
     storage.setItem("toured", 1);
+    document.body.style.overflow = "auto";
     getPalettes();
   } else {
     tourStep++;
     advanceTourButton.textContent =
       tourStep + 1 == tourContent.length ? "Get started" : "Next";
     tourContent[tourStep].style.display = "block";
+    reverseTourButton.style.display = "block";
+    tourControls.style.justifyContent = "space-between";
   }
+  
 });
+
+reverseTourButton.addEventListener("click", () => {
+  tourContent[tourStep].style.display = "none"
+  if (tourStep - 1 == 0) {
+    reverseTourButton.style.display = "none";
+    tourControls.style.justifyContent = "flex-end";
+  }
+  tourStep--;
+  tourContent[tourStep].style.display = "block";
+  advanceTourButton.textContent  = tourStep + 1 == tourContent.length ? "Get started" : "Next";
+  
+
+})

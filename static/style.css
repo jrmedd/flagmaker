@@ -388,7 +388,7 @@ div#palette-options > * + * {
     width: 100%;
 }
 
-#tour-modal>div {
+#tour-content {
     width: 40rem;
     max-width: 95%;
     height: 95vh;
@@ -406,4 +406,12 @@ div#palette-options > * + * {
 
 .tour-step>ol>li+li {
     margin-top: 1.5rem;
+}
+
+#tour-controls {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: .5rem;
 }
