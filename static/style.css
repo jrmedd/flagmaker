@@ -32,9 +32,10 @@
 
 h1, h2, h3, h4 {
     font-weight: 400;
+    font-family: "Teachers Pet";
 }
 
-h3, h4 {
+h2, h3, h4 {
     font-size: 1rem;
     padding: 0;
     margin: 0;
@@ -43,6 +44,16 @@ h3, h4 {
 
 h4 {
     font-size: .8rem;
+}
+
+header h1 a {
+    border: none;
+}
+
+.button-link {
+    width: 2rem;
+    height: 2rem;
+    border: none;
 }
 
 a, a:visited {
@@ -116,6 +127,8 @@ header {
     font-size: 1.25rem;
 }
 
+
+
 button {
     height: 2rem;
     appearance: none;
@@ -125,6 +138,7 @@ button {
     font-family: "Teachers Pet";
     font-weight: 700;
     text-transform: uppercase;
+    cursor: pointer;
 }
 
 .text-button {
@@ -150,7 +164,7 @@ main {
     justify-content: flex-start;
     padding: .5rem;
     background-image: linear-gradient(var(--color-5), var(--color-4));
-    height: calc(100vh - 4rem);
+    min-height: calc(100vh - 5rem);
 }
 
 #drawing-area {
@@ -384,7 +398,7 @@ div#palette-options > * + * {
     border-bottom: 1px dotted var(--color-5);
 }
 
-#tour-modal svg {
+.tour-image {
     width: 100%;
 }
 
@@ -414,4 +428,47 @@ div#palette-options > * + * {
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: .5rem;
+}
+
+svg.inline-icon {
+    width: 1rem;
+    height: 1rem;
+    display: inline;
+}
+
+#stream {
+    width: 40rem;
+    height: 23rem;
+    max-width: 95%;
+    margin-bottom: 1rem;
+}
+
+section {
+    width: 40rem;
+    max-width: 95%;
+    color: var(--color-1);
+    font-family: "Teachers Pet Sans";
+}
+
+#gallery {
+    display: flex;
+    width: 40rem;
+    max-width: 95%;
+    flex-flow: row wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+}
+
+#gallery li {
+    width: 5rem;
+    margin: 1rem;
+}
+
+#gallery img {
+    width: 100%;
+    height: auto;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
 }

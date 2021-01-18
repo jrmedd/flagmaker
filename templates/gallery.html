@@ -14,7 +14,7 @@
     <meta name="application-name" content="Collision">
     <meta name="msapplication-TileColor" content="#333333">
     <meta name="theme-color" content="#ffffff">
-    <title>Collision – Admin</title>
+    <title>Collision – Flag space</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
 </head>
 <body>
@@ -27,17 +27,36 @@
                 <path class="fill-1" fill-rule="evenodd" clip-rule="evenodd" d="M8 10H12V13H11V14H5V13H4V4H5V3H11V4H12V7H8V10Z" />
                 <path class="fill-5" d="M9 11H11V12H10V13H6V12H5V5H6V4H10V5H11V6H9V5H7V12H9V11Z"/>
             </svg>
-            <h1><span class="sr-only">C</span>ollision</h1>
+            <h1><a href="/"><span class="sr-only">C</span>ollision</a></h1>
         </div>
-        <button id="notify" class="text-button">Get notifications</button>
     </header>
     <main>
-        <ul id="unapproved-flags"></ul>
+        <section>
+        <h2>Flag space</h2>
+        <p>Welcome to the Collision flag space. Below is a window into the digital twin of Greater Manchester we've created as a home for all of the flags planted across the region.</p>
+        <p>For the best and most social experience, use link below to enter the space (you'll need to install Roblox on your device in order to access!)</p>
+        <a  href="https://www.roblox.com/games/6177691750/this-place-of-mine-Collision">Enter the flag space</a>
+        <p>Alternatively, there's a digital drone hovering around the space, so you can see all of the flags and any avatars currently visiting:</p>
+        </section>
+        <iframe id="stream" width="848" height="480" src="https://www.youtube.com/embed/{{key}}?controls=0&autoplay=1" frameborder="0" autoplay="1" allowfullscreen></iframe>
+        <section>
+        <h2>Latest flags</h2>
+            <ul id="gallery">
+                {% for flag in flags %}
+                <li class="remix-flag">
+                    <img src="{{ flag['png'] }}" />
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
     </main>
-    <script src="{{ url_for('static', filename='admin.js') }}"></script>
     <script>
-        const pushPublicKey = "{{ PUSH_PUBLIC_KEY }}"
-    </script>
-    <script src="{{ url_for('static', filename='pushSub.js') }}"></script>
+        const remixes = document.getElementsByClassName("remix-flag");
+        for (let remix of remixes) {
+            remix.addEventListener("click", ()=>{
+                localStorage.setItem("userDesign", remix.src);
+            })
+        }
+    </script>    
 </body>
 </html>

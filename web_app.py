@@ -20,6 +20,7 @@ FLAGS = DB['flags']
 PLANTS = DB['plants']
 SUBS = DB['subs']
 PALETTES = DB['palettes']
+STREAM = DB['stream']
 
 PUSH_PRIVATE_KEY = os.environ.get('PUSH_PRIVATE_KEY')
 PUSH_PUBLIC_KEY = os.environ.get('PUSH_PUBLIC_KEY')
@@ -43,6 +44,12 @@ def login_required(f):
 @APP.route('/')
 def index():
     return render_template('index.html', MAPS_API=MAPS_API)
+
+@APP.route('/flag-space')
+def gallery():
+    flags=list(FLAGS.find({'approved':True}, sort=[('_id', -1)]).limit(25))
+    stream = STREAM.find_one({'stream':'live'})
+    return render_template('gallery.html', key=stream.get('key'),flags=flags[0:20])
 
 @APP.route('/admin')
 def admin():

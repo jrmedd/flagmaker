@@ -124,8 +124,11 @@ const startDrawing = event => {
 const stopDrawing = event => {
   event.preventDefault();
   drawing = false;
-  saveTimeout = setTimeout(()=>storage.setItem("userDesign", pixelGrid.toDataURL()), 1000);
+  saveTimeout = setTimeout(()=>{
+    storage.setItem("userDesign", pixelGrid.toDataURL());
+  }, 500);
 };
+
 
 const  draw = event => {
   event.preventDefault();
@@ -150,6 +153,8 @@ const  draw = event => {
       }
     }
 }
+
+
 
 const submission = () => {
   const png = pixelGrid.toDataURL();
