@@ -43,20 +43,12 @@
         <h2>Latest flags</h2>
             <ul id="gallery">
                 {% for flag in flags %}
-                <li class="remix-flag">
+                <li>
                     <img src="{{ flag['png'] }}" />
                 </li>
                 {% endfor %}
             </ul>
         </section>
     </main>
-    <script>
-        const remixes = document.getElementsByClassName("remix-flag");
-        for (let remix of remixes) {
-            remix.addEventListener("click", ()=>{
-                localStorage.setItem("userDesign", remix.src);
-            })
-        }
-    </script>    
 </body>
 </html>
