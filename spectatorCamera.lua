@@ -61,7 +61,7 @@ end
 )
 
 mouse.KeyDown:connect(function(key)
-	if key == "e" then
+	if key == "e" and player.Name == "meddjr" then
 		print("Pressed e")
 		spectate()
 	end
