@@ -47,7 +47,8 @@ def index():
 
 @APP.route('/flag-space')
 def gallery():
-    flags=list(FLAGS.find({'approved':True}, sort=[('_id', -1)]).limit(25))
+    flags=FLAGS.distinct("png",{'approved':True})
+    print(flags)
     stream = STREAM.find_one({'stream':'live'})
     return render_template('gallery.html', key=stream.get('key'),flags=flags[0:20])
 
